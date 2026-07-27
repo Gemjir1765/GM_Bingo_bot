@@ -20,8 +20,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🎉 Baga nagaan dhuftan gara GM Bingo!\n\n"
         "Afaan filadhu:",
-        reply_markup=reply_markup
-    )
+        reply_markup=reply_markup)
 
 
 async def language(update: Update, context: ContextTypes.DEFAULT_TYPE):
