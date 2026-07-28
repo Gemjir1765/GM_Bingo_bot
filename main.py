@@ -23,16 +23,16 @@ filters
 )
 
 # ==========================
-BOT SETTINGS
-==========================
+# BOT SETTINGS
+#==========================
 
 BOT_TOKEN = "7680436212:AAGekyAeVrMyMcJI0BSWV5NUzuF9NthlJLk"
 ADMIN_ID = 6602052739
 
 
-==========================
-PAYMENT SETTINGS
-==========================
+#==========================
+# PAYMENT SETTINGS
+#==========================
 
 ADMIN_COMMISSION_PERCENT = 30
 
@@ -44,24 +44,24 @@ level=logging.INFO,
 
 logger = logging.getLogger(name)
 
-==========================
-FILES
-==========================
+#==========================
+# FILES
+#==========================
 
 USERS_FILE = "users.json"
 GAME_FILE = "game.json"
 
-==========================
-CONVERSATION STATES
-==========================
+#==========================
+#CONVERSATION STATES
+#==========================
 
 LANGUAGE = 0
 FULL_NAME = 1
 PHONE = 2
 LOCATION = 3
-==========================
-JSON FUNCTIONS
-==========================
+#==========================
+#JSON FUNCTIONS
+#==========================
 
 def load_json(filename):
 if not os.path.exists(filename):
@@ -77,17 +77,17 @@ with open(filename, "w", encoding="utf-8") as f:
 json.dump(data, f, indent=4, ensure_ascii=False)
 
 
-==========================
-LOAD DATA
-==========================
+#==========================
+#LOAD DATA
+#==========================
 
 users = load_json(USERS_FILE)
 game = load_json(GAME_FILE)
 
 
-==========================
-DEFAULT GAME DATA
-==========================
+#==========================
+#DEFAULT GAME DATA
+#==========================
 
 if not game:
 game = {
@@ -98,9 +98,9 @@ game = {
 }
 
 save_json(GAME_FILE, game)
-==========================
-START COMMAND
-==========================
+#==========================
+#START COMMAND
+#==========================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -126,9 +126,9 @@ reply_markup=reply_markup
 return LANGUAGE
 
 
-==========================
-LANGUAGE CALLBACK
-==========================
+#==========================
+#LANGUAGE CALLBACK
+#==========================
 
 async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -160,9 +160,9 @@ text = (
 await query.message.reply_text(text)
 
 return FULL_NAME
-==========================
-FULL NAME
-==========================
+#==========================
+#FULL NAME
+#==========================
 
 async def get_full_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -212,9 +212,9 @@ reply_markup=keyboard
 )
 
 return PHONE
-==========================
-PHONE NUMBER
-==========================
+#==========================
+#PHONE NUMBER
+#==========================
 
 async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -262,9 +262,9 @@ reply_markup=keyboard
 )
 
 return LOCATION
-==========================
-LOCATION
-==========================
+#==========================
+#LOCATION
+#==========================
 
 async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -310,9 +310,9 @@ await update.message.reply_text(text)
 await generate_bingo_card(update, context)
 
 return ConversationHandler.END
-==========================
-BINGO CARD
-==========================
+#==========================
+#BINGO CARD
+#==========================
 
 def generate_card():
 
@@ -365,9 +365,9 @@ save_json(USERS_FILE, users)
 await update.message.reply_text(
 format_card(card)
 )
-==========================
-GAME FUNCTIONS
-==========================
+#==========================
+#GAME FUNCTIONS
+#==========================
 
 def new_game():
 
@@ -412,9 +412,9 @@ except Exception:
 pass
 
 
-==========================
-ADMIN COMMANDS
-==========================
+#==========================
+#ADMIN COMMANDS
+#==========================
     async def start_game(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if update.effective_user.id != ADMIN_ID:
@@ -437,9 +437,9 @@ await call_next_number(context)
 await update.message.reply_text(
 "✅ Next number sent."
 )
-==========================
-CHECK BINGO LINES
-==========================
+#==========================
+#CHECK BINGO LINES
+#==========================
 
 def count_winning_lines(card, called_numbers):
 
@@ -486,9 +486,9 @@ if ok:
 completed += 1
 
 return completed
-==========================
-BINGO CLAIM
-==========================
+#==========================
+#BINGO CLAIM
+#==========================
 
 async def claim_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -549,9 +549,9 @@ f"❌ Not yet.\n"
 f"You have {winning_lines} winning line(s).\n"
 "You need 2 lines to win."
 )
-==========================
-PRIZE CALCULATION
-==========================
+#==========================
+#PRIZE CALCULATION
+#==========================
 
 def calculate_prize(total_amount):
 
@@ -585,9 +585,9 @@ results.append({
 })
 
 return results
-==========================
-FINISH ROUND
-==========================
+#==========================
+#FINISH ROUND
+#==========================
 
 async def finish_round(context, total_amount):
 
@@ -622,9 +622,9 @@ await context.bot.send_message(
 chat_id=ADMIN_ID,
 text=message
 )
-==========================
-WINNERS MANAGEMENT
-==========================
+#==========================
+#WINNERS MANAGEMENT
+#==========================
 
 def add_winner(user_id):
 
@@ -647,9 +647,9 @@ return True
 
 
 
-==========================
-NEW ROUND
-==========================
+#==========================
+#NEW ROUND
+#==========================
 
 def reset_round():
 
@@ -662,9 +662,9 @@ save_json(GAME_FILE, game)
 
 
 
-==========================
-ANNOUNCE WINNERS
-==========================
+#==========================
+#ANNOUNCE WINNERS
+#==========================
 
 async def announce_winners(context):
 
@@ -685,9 +685,9 @@ await context.bot.send_message(
 chat_id=ADMIN_ID,
 text=text
 )
-==========================
-MAIN BOT SETUP
-==========================
+#==========================
+#MAIN BOT SETUP
+#==========================
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
