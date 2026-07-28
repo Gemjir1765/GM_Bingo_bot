@@ -119,8 +119,7 @@ async def get_full_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
         MessageHandler(filters.TEXT & ~filters.COMMAND, get_full_name)
     ],
 }
-        
     )
 
-    # 
+    
 
