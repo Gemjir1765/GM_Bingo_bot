@@ -97,3 +97,30 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
         app.add_handler(CommandHandler("startgame", startgame))
 app.add_handler(CommandHandler("stopgame", stopgame))
 app.add_handler(CommandHandler("status", status))
+LANGUAGE, FULL_NAME = range(2)
+
+await query.message.reply_text(
+    "📝 Maqaa guutuu kee barreessi:"
+)
+
+return FULL_NAME
+async def get_full_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    full_name = update.message.text.strip()
+
+    context.user_data["full_name"] = full_name
+
+    await update.message.reply_text(
+        f"Galatoomi {full_name}! ✅"
+        states={
+    LANGUAGE: [
+        CallbackQueryHandler(language_selected)
+    ],
+    FULL_NAME: [
+        MessageHandler(filters.TEXT & ~filters.COMMAND, get_full_name)
+    ],
+}
+        
+    )
+
+    # 
+
