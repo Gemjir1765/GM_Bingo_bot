@@ -63,7 +63,7 @@ LOCATION = 3
 #JSON FUNCTIONS
 #==========================
 
-  def load_json(filename): 
+def load_json(filename): 
       if not os.path.exists(filename):
         with open(filename, "w", encoding="utf-8") as f:
             json.dump({}, f)
