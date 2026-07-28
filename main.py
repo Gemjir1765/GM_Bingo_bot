@@ -87,10 +87,10 @@ game = load_json(GAME_FILE)
 
 if not game:
    game = {
-"started": False,
-"numbers": [],
-"called_numbers": [],
-"winner": None
+     "started": False,
+     "numbers": [],
+     "called_numbers": [],
+     "winner": None
 }
 
 save_json(GAME_FILE, game)
