@@ -86,7 +86,7 @@ game = load_json(GAME_FILE)
 #==========================
 
 if not game:
-  game = {
+   game = {
 "started": False,
 "numbers": [],
 "called_numbers": [],
