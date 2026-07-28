@@ -17,7 +17,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [
             InlineKeyboardButton("🇪🇹 አማርኛ", callback_data="am")
         ]
-    ]
+      ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
