@@ -266,49 +266,49 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #==========================
 
 async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    location = update.message.location
 
-location = update.message.location
+    if location is None:
+        await update.message.reply_text(
+            "❌ Please use the Share Location button."
+        )
+        return LOCATION
 
-if location is None:
-await update.message.reply_text(
-"❌ Please use the Share Location button."
-)
-return LOCATION
+    user_id = str(update.effective_user.id)
 
-user_id = str(update.effective_user.id)
+    users[user_id]["latitude"] = location.latitude
+    users[user_id]["longitude"] = location.longitude
+    users[user_id]["registered"] = True
 
-users[user_id]["latitude"] = location.latitude
-users[user_id]["longitude"] = location.longitude
-users[user_id]["registered"] = True
+    save_json(USERS_FILE, users)
 
-save_json(USERS_FILE, users)
+    language = context.user_data["language"]
 
-language = context.user_data["language"]
+    if language == "or":
+        text = (
+            "✅ Galmeen kee milkaa'eera.\n\n"
+            "🎉 Gara tapha GM Bingo baga nagaan dhuftan!"
+        )
 
-if language == "or":
-text = (
-"✅ Galmeen kee milkaa'eera.\n\n"
-"🎉 Gara tapha GM Bingo baga nagaan dhuftan!"
-)
+    elif language == "en":
+        text = (
+            "✅ Registration completed successfully.\n\n"
+            "🎉 Welcome to GM Bingo!"
+        )
 
-elif language == "en":
-text = (
-"✅ Registration completed successfully.\n\n"
-"🎉 Welcome to GM Bingo!"
-)
+    else:
+        text = (
+            "✅ ምዝገባዎ በተሳካ ሁኔታ ተጠናቋል።\n\n"
+            "🎉 ወደ GM Bingo እንኳን በደህና መጡ!"
+        )
 
-else:
-text = (
-"✅ ምዝገባዎ በተሳካ ሁኔታ ተጠናቋል።\n\n"
-"🎉 ወደ GM Bingo እንኳን በደህና መጡ!"
-)
+    await update.message.reply_text(text)
 
-await update.message.reply_text(text)
+    # Kaardii Bingo uumuuf
+    await generate_bingo_card(update, context)
 
-# Kaardii Bingo uumuuf
-await generate_bingo_card(update, context)
+    return ConversationHandler.END
 
-return ConversationHandler.END
 #==========================
 #BINGO CARD
 #==========================
