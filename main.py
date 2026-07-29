@@ -26,7 +26,9 @@ filters
 # BOT SETTINGS
 #==========================
 
-BOT_TOKEN = "7680436212:AAGekyAeVrMyMcJI0BSWV5NUzuF9NthlJLk"
+import os
+
+TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = 6602052739
 
 
