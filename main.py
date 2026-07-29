@@ -245,22 +245,22 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
         one_time_keyboard=True
     )
 
+    if language == "or":
+        text = "📍 Mee Share Location jedhu tuquun iddoo kee ergi."
 
-if language == "or":
-text = "📍 Mee Share Location jedhu tuquun iddoo kee ergi."
+    elif language == "en":
+        text = "📍 Please tap Share Location to send your location."
 
-elif language == "en":
-text = "📍 Please tap Share Location to send your location."
+    else:
+        text = "📍 እባክዎ Share Location በመጫን አካባቢዎን ይላኩ።"
 
-else:
-text = "📍 እባክዎ Share Location በመጫን አካባቢዎን ይላኩ።"
+    await update.message.reply_text(
+        text,
+        reply_markup=keyboard
+    )
 
-await update.message.reply_text(
-text,
-reply_markup=keyboard
-)
+    return LOCATION
 
-return LOCATION
 #==========================
 #LOCATION
 #==========================
