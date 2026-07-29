@@ -128,45 +128,47 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-query = update.callback_query
-await query.answer()
+    query = update.callback_query
+    await query.answer()
 
-language = query.data
+    language = query.data
 
-context.user_data["language"] = language
+    context.user_data["language"] = language
 
-if language == "or":
-text = (
-"✅ Afaan Oromoo filatte.\n\n"
-"📝 Mee maqaa guutuu kee barreessi:"
-)
+    if language == "or":
+        text = (
+            "✅ Afaan Oromoo filatte.\n\n"
+            "📝 Mee maqaa guutuu kee barreessi:"
+        )
 
-elif language == "en":
-text = (
-"✅ English selected.\n\n"
-"📝 Please enter your full name:"
-)
+    elif language == "en":
+        text = (
+            "✅ English selected.\n\n"
+            "📝 Please enter your full name:"
+        )
 
-else:
-text = (
-"✅ አማርኛ ተመርጧል።\n\n"
-"📝 እባክዎ ሙሉ ስምዎን ያስገቡ።"
-)
+    else:
+        text = (
+            "✅ አማርኛ ተመርጧል።\n\n"
+            "📝 እባክዎ ሙሉ ስምዎን ያስገቡ።"
+        )
 
-await query.message.reply_text(text)
+    await query.message.reply_text(text)
 
-return FULL_NAME
+    return FULL_NAME
+
+
 #==========================
-#FULL NAME
+# FULL NAME
 #==========================
 
 async def get_full_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-full_name = update.message.text.strip()
+    full_name = update.message.text.strip()
 
-context.user_data["full_name"] = full_name
+    context.user_data["full_name"] = full_name
 
-user_id = str(update.effective_user.id)
+    user_id = str(update.effective_user.id)
 
 if user_id not in users:
 users[user_id] = {}
