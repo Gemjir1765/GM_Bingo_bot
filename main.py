@@ -375,273 +375,260 @@ def new_game():
 
     save_json(GAME_FILE, game)
 
-
-
-
-
 async def call_next_number(context: ContextTypes.DEFAULT_TYPE):
+    if not game["started"]:
+        return
 
-if not game["started"]:
-return
+    if len(game["numbers"]) == 0:
+        game["started"] = False
+        save_json(GAME_FILE, game)
+        return
 
-if len(game["numbers"]) == 0:
-game["started"] = False
-save_json(GAME_FILE, game)
-return
+    number = game["numbers"].pop(0)
 
-number = game["numbers"].pop(0)
+    game["called_numbers"].append(number)
 
-game["called_numbers"].append(number)
+    save_json(GAME_FILE, game)
 
-save_json(GAME_FILE, game)
+    users_data = load_json(USERS_FILE)
 
-users_data = load_json(USERS_FILE)
+    for user_id in users_data:
+        try:
+            await context.bot.send_message(
+                chat_id=int(user_id),
+                text=f"🎲 New Number: {number}"
+            )
 
-for user_id in users_data:
-
-try:
-await context.bot.send_message(
-chat_id=int(user_id),
-text=f"🎲 New Number: {number}"
-)
-
-except Exception:
-pass
-
+        except Exception:
+            pass
 
 #==========================
 #ADMIN COMMANDS
 #==========================
-    async def start_game(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-if update.effective_user.id != ADMIN_ID:
-return
+async def start_game(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        return
 
-new_game()
+    new_game()
 
-await update.message.reply_text(
-"✅ GM Bingo game started."
-)
+    await update.message.reply_text(
+        "✅ GM Bingo game started."
+    )
 
 
 async def next_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        return
 
-if update.effective_user.id != ADMIN_ID:
-return
+    await call_next_number(context)
 
-await call_next_number(context)
+    await update.message.reply_text(
+        "✅ Next number sent."
+    )
 
-await update.message.reply_text(
-"✅ Next number sent."
-)
 #==========================
 #CHECK BINGO LINES
 #==========================
 
 def count_winning_lines(card, called_numbers):
+    lines = []
 
-lines = []
+    # Horizontal
+    for row in range(5):
+        line = []
 
-# Horizontal
-for row in range(5):
-line = []
+        for col in ["B", "I", "N", "G", "O"]:
+            line.append(card[col][row])
 
-for col in ["B", "I", "N", "G", "O"]:
-line.append(card[col][row])
+        lines.append(line)
 
-lines.append(line)
+    # Vertical
+    for col in ["B", "I", "N", "G", "O"]:
+        lines.append(card[col])
 
-# Vertical
-for col in ["B", "I", "N", "G", "O"]:
-lines.append(card[col])
+    # Diagonal 1
+    diagonal1 = []
+    for i, col in enumerate(["B", "I", "N", "G", "O"]):
+        diagonal1.append(card[col][i])
 
-# Diagonal 1
-diagonal1 = []
-for i, col in enumerate(["B", "I", "N", "G", "O"]):
-diagonal1.append(card[col][i])
+    lines.append(diagonal1)
 
-lines.append(diagonal1)
+    # Diagonal 2
+    diagonal2 = []
+    for i, col in enumerate(["O", "G", "N", "I", "B"]):
+        diagonal2.append(card[col][i])
 
-# Diagonal 2
-diagonal2 = []
-for i, col in enumerate(["O", "G", "N", "I", "B"]):
-diagonal2.append(card[col][i])
+    lines.append(diagonal2)
 
-lines.append(diagonal2)
+    completed = 0
 
-completed = 0
+    for line in lines:
+        ok = True
 
-for line in lines:
-ok = True
+        for number in line:
+            if number != "FREE" and number not in called_numbers:
+                ok = False
+                break
 
-for number in line:
-if number != "FREE" and number not in called_numbers:
-ok = False
-break
+        if ok:
+            completed += 1
 
-if ok:
-completed += 1
+    return completed
 
-return completed
 #==========================
 #BINGO CLAIM
 #==========================
-
 async def claim_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = str(update.effective_user.id)
 
-user_id = str(update.effective_user.id)
+    if user_id not in users:
+        await update.message.reply_text(
+            "❌ You are not registered."
+        )
+        return
 
-if user_id not in users:
-await update.message.reply_text(
-"❌ You are not registered."
-)
-return
+    if game["winner"] is not None:
+        await update.message.reply_text(
+            "🏆 This round is already finished."
+        )
+        return
 
-if game["winner"] is not None:
-await update.message.reply_text(
-"🏆 This round is already finished."
-)
-return
+    card = users[user_id].get("card")
 
-card = users[user_id].get("card")
+    if not card:
+        await update.message.reply_text(
+            "❌ You don't have a Bingo card."
+        )
+        return
 
-if not card:
-await update.message.reply_text(
-"❌ You don't have a Bingo card."
-)
-return
+    called_numbers = game["called_numbers"]
 
-called_numbers = game["called_numbers"]
+    winning_lines = count_winning_lines(
+        card,
+        called_numbers
+    )
 
-winning_lines = count_winning_lines(
-card,
-called_numbers
-)
+    if winning_lines >= 2:
 
-if winning_lines >= 2:
+        if "winners" not in game:
+            game["winners"] = []
 
-if "winners" not in game:
-game["winners"] = []
+        game["winners"].append({
+            "user_id": user_id,
+            "name": users[user_id]["full_name"],
+            "lines": winning_lines
+        })
 
-game["winners"].append({
-"user_id": user_id,
-"name": users[user_id]["full_name"],
-"lines": winning_lines
-})
+        game["winner"] = user_id
 
-game["winner"] = user_id
+        save_json(GAME_FILE, game)
 
-save_json(GAME_FILE, game)
+        await update.message.reply_text(
+            "🎉 CONGRATULATIONS!\n\n"
+            "✅ You created two winning lines.\n"
+            "🏆 You are a winner!"
+        )
 
-await update.message.reply_text(
-"🎉 CONGRATULATIONS!\n\n"
-"✅ You created two winning lines.\n"
-"🏆 You are a winner!"
-)
+    else:
 
-else:
+        await update.message.reply_text(
+            f"❌ Not yet.\n"
+            f"You have {winning_lines} winning line(s).\n"
+            "You need 2 lines to win."
+        )
 
-await update.message.reply_text(
-f"❌ Not yet.\n"
-f"You have {winning_lines} winning line(s).\n"
-"You need 2 lines to win."
-)
+
 #==========================
 #PRIZE CALCULATION
 #==========================
 
 def calculate_prize(total_amount):
+    admin_fee = (
+        total_amount *
+        ADMIN_COMMISSION_PERCENT /
+        100
+    )
 
-admin_fee = (
-total_amount *
-ADMIN_COMMISSION_PERCENT /
-100
-)
+    prize_pool = total_amount - admin_fee
 
-prize_pool = total_amount - admin_fee
-
-return admin_fee, prize_pool
-
+    return admin_fee, prize_pool
 
 
 def divide_prize(prize_pool, winners):
+    if len(winners) == 0:
+        return []
 
-if len(winners) == 0:
-return []
+    each_prize = prize_pool / len(winners)
 
-each_prize = prize_pool / len(winners)
+    results = []
 
-results = []
+    for winner in winners:
+        results.append({
+            "user_id": winner["user_id"],
+            "name": winner["name"],
+            "amount": each_prize
+        })
 
-for winner in winners:
+    return results
 
-results.append({
-"user_id": winner["user_id"],
-"name": winner["name"],
-"amount": each_prize
-})
-
-return results
 #==========================
 #FINISH ROUND
 #==========================
-
 async def finish_round(context, total_amount):
+    winners = game.get("winners", [])
 
-winners = game.get("winners", [])
+    if not winners:
+        return
 
-if not winners:
-return
+    admin_fee, prize_pool = calculate_prize(
+        total_amount
+    )
 
-admin_fee, prize_pool = calculate_prize(
-total_amount
-)
+    prizes = divide_prize(
+        prize_pool,
+        winners
+    )
 
-prizes = divide_prize(
-prize_pool,
-winners
-)
+    message = "🏆 GM Bingo Winners\n\n"
 
-message = "🏆 GM Bingo Winners\n\n"
+    for item in prizes:
+        message += (
+            f"🥇 {item['name']}\n"
+            f"💰 Prize: {item['amount']}\n\n"
+        )
 
-for item in prizes:
-message += (
-f"🥇 {item['name']}\n"
-f"💰 Prize: {item['amount']}\n\n"
-)
+    message += (
+        f"👑 Admin Commission: {admin_fee}\n"
+        f"🎁 Total Prize Pool: {prize_pool}"
+    )
 
-message += (
-f"👑 Admin Commission: {admin_fee}\n"
-f"🎁 Total Prize Pool: {prize_pool}"
-)
+    await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=message
+    )
 
-await context.bot.send_message(
-chat_id=ADMIN_ID,
-text=message
-)
 #==========================
 #WINNERS MANAGEMENT
 #==========================
 
 def add_winner(user_id):
+    if "winners" not in game:
+        game["winners"] = []
 
-if "winners" not in game:
-game["winners"] = []
+    # Namni tokko yeroo lama akka hin galmoofne
+    for winner in game["winners"]:
+        if winner["user_id"] == user_id:
+            return False
 
-# Namni tokko yeroo lama akka hin galmoofne
-for winner in game["winners"]:
-if winner["user_id"] == user_id:
-return False
+    game["winners"].append({
+        "user_id": user_id,
+        "name": users[user_id]["full_name"]
+    })
 
-game["winners"].append({
-"user_id": user_id,
-"name": users[user_id]["full_name"]
-})
+    save_json(GAME_FILE, game)
 
-save_json(GAME_FILE, game)
-
-return True
-
+    return True
 
 
 #==========================
@@ -649,150 +636,141 @@ return True
 #==========================
 
 def reset_round():
+    game["started"] = False
+    game["numbers"] = []
+    game["called_numbers"] = []
+    game["winners"] = []
 
-game["started"] = False
-game["numbers"] = []
-game["called_numbers"] = []
-game["winners"] = []
-
-save_json(GAME_FILE, game)
-
+    save_json(GAME_FILE, game)
 
 
 #==========================
-#ANNOUNCE WINNERS
+# ANNOUNCE WINNERS
 #==========================
 
 async def announce_winners(context):
+    winners = game.get("winners", [])
 
-winners = game.get("winners", [])
+    if not winners:
+        return
 
-if not winners:
-return
+    text = "🏆 GM Bingo Winners\n\n"
 
-text = "🏆 GM Bingo Winners\n\n"
+    for index, winner in enumerate(winners, start=1):
+        text += (
+            f"{index}. {winner['name']}\n"
+        )
 
-for index, winner in enumerate(winners, start=1):
+    await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=text
+    )
 
-text += (
-f"{index}. {winner['name']}\n"
-)
 
-await context.bot.send_message(
-chat_id=ADMIN_ID,
-text=text
-)
 #==========================
-#MAIN BOT SETUP
+# MAIN BOT SETUP
 #==========================
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "❌ Operation cancelled."
+    )
 
-await update.message.reply_text(
-"❌ Operation cancelled."
-)
-
-return ConversationHandler.END
-
+    return ConversationHandler.END
 
 
 def main():
-
-app = (
-ApplicationBuilder()
-.token(BOT_TOKEN)
-.build()
-)
+    app = (
+        ApplicationBuilder()
+        .token(BOT_TOKEN)
+        .build()
+    )
 
 
 # Registration Conversation
 
-conv_handler = ConversationHandler(
+    conv_handler = ConversationHandler(
 
-entry_points=[
-CommandHandler(
-"start",
-start
-)
- ],
+        entry_points=[
+            CommandHandler(
+                "start",
+                start
+            )
+        ],
 
-states={
+        states={
 
-LANGUAGE: [
-CallbackQueryHandler(
-language_callback
-)
- ],
+            LANGUAGE: [
+                CallbackQueryHandler(
+                    language_callback
+                )
+            ],
 
-FULL_NAME: [
-MessageHandler(
-filters.TEXT & ~filters.COMMAND,
-get_full_name
-)
- ],
+            FULL_NAME: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    get_full_name
+                )
+            ],
 
-PHONE: [
-MessageHandler(
-filters.CONTACT,
-get_phone
-)
- ],
+            PHONE: [
+                MessageHandler(
+                    filters.CONTACT,
+                    get_phone
+                )
+            ],
 
-LOCATION: [
-MessageHandler(
-filters.LOCATION,
-get_location
-)
- ]
-},
+            LOCATION: [
+                MessageHandler(
+                    filters.LOCATION,
+                    get_location
+                )
+            ]
+        },
 
-
-fallbacks=[
-CommandHandler(
-"cancel",
-cancel
-)
- ]
-)
-
-
-# User handlers
-
-app.add_handler(conv_handler)
-
-app.add_handler(
-CommandHandler(
-"bingo",
-claim_bingo
-)
-)
+        fallbacks=[
+            CommandHandler(
+                "cancel",
+                cancel
+            )
+        ]
+    )
 
 
-# Admin handlers
+    # User handlers
 
-app.add_handler(
-CommandHandler(
-"start_game",
-start_game
-)
-)
+    app.add_handler(conv_handler)
 
-app.add_handler(
-CommandHandler(
-"next",
-next_number
-)
-)
+    app.add_handler(
+        CommandHandler(
+            "bingo",
+            claim_bingo
+        )
+    )
 
 
-print("GM Bingo Bot started...")
+    # Admin handlers
+
+    app.add_handler(
+        CommandHandler(
+            "start_game",
+            start_game
+        )
+    )
+
+    app.add_handler(
+        CommandHandler(
+            "next",
+            next_number
+        )
+    )
 
 
-app.run_polling()
+    print("GM Bingo Bot started...")
 
 
-
-if name == "main":
-main()
+    app.run_polling()
 
 
+if __name__ == "__main__":
+    main()
