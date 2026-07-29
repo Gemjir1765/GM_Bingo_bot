@@ -157,7 +157,6 @@ async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     return FULL_NAME
 
-
 #==========================
 # FULL NAME
 #==========================
@@ -178,38 +177,39 @@ async def get_full_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     users[user_id]["full_name"] = full_name
     users[user_id]["language"] = context.user_data["language"]
 
-save_json(USERS_FILE, users)
+    save_json(USERS_FILE, users)
 
-language = context.user_data["language"]
+    language = context.user_data["language"]
 
-keyboard = ReplyKeyboardMarkup(
-    [
+    keyboard = ReplyKeyboardMarkup(
         [
-            KeyboardButton(
-                "📱 Share Phone Number",
-                request_contact=True
-            )
-        ]
-    ],
-    resize_keyboard=True,
-    one_time_keyboard=True
-)
+            [
+                KeyboardButton(
+                    "📱 Share Phone Number",
+                    request_contact=True
+                )
+            ]
+        ],
+        resize_keyboard=True,
+        one_time_keyboard=True
+    )
 
-if language == "or":
-    text = "📱 Mee lakkoofsa bilbilaa kee Share Phone Number jedhu tuquun ergi."
+    if language == "or":
+        text = "📱 Mee lakkoofsa bilbilaa kee Share Phone Number jedhu tuquun ergi."
 
-elif language == "en":
-    text = "📱 Please tap Share Phone Number to send your phone number."
+    elif language == "en":
+        text = "📱 Please tap Share Phone Number to send your phone number."
 
-else:
-    text = "📱 እባክዎ Share Phone Number በመጫን ስልክ ቁጥርዎን ይላኩ።"
+    else:
+        text = "📱 እባክዎ Share Phone Number በመጫን ስልክ ቁጥርዎን ይላኩ።"
 
-await update.message.reply_text(
-    text,
-    reply_markup=keyboard
-)
+    await update.message.reply_text(
+        text,
+        reply_markup=keyboard
+    )
 
-return PHONE
+    return PHONE
+
 #==========================
 #PHONE NUMBER
 #==========================
