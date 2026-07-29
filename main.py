@@ -100,26 +100,26 @@ save_json(GAME_FILE, game)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-keyboard = [
-[
-InlineKeyboardButton("🇪🇹 Afaan Oromoo", callback_data="or"),
-InlineKeyboardButton("🇬🇧 English", callback_data="en")
- ],
-[
-InlineKeyboardButton("🇪🇹 አማርኛ", callback_data="am")
- ]
-]
+    keyboard = [
+        [
+            InlineKeyboardButton("🇪🇹 Afaan Oromoo", callback_data="or"),
+            InlineKeyboardButton("🇬🇧 English", callback_data="en")
+        ],
+        [
+            InlineKeyboardButton("🇪🇹 አማርኛ", callback_data="am")
+        ]
+    ]
 
-reply_markup = InlineKeyboardMarkup(keyboard)
+    reply_markup = InlineKeyboardMarkup(keyboard)
 
-await update.message.reply_text(
-"🌍 Please choose your language.\n\n"
-"Mee afaan filadhu.\n\n"
-"እባክዎ ቋንቋ ይምረጡ።",
-reply_markup=reply_markup
-)
+    await update.message.reply_text(
+        "🌍 Please choose your language.\n\n"
+        "Mee afaan filadhu.\n\n"
+        "እባክዎ ቋንቋ ይምረጡ።",
+        reply_markup=reply_markup
+    )
 
-return LANGUAGE
+    return LANGUAGE
 
 
 #==========================
