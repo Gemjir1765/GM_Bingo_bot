@@ -346,35 +346,37 @@ def format_card(card):
 
     return text
 
-
 async def generate_bingo_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = str(update.effective_user.id)
 
-user_id = str(update.effective_user.id)
+    card = generate_card()
 
-card = generate_card()
+    users[user_id]["card"] = card
 
-users[user_id]["card"] = card
+    save_json(USERS_FILE, users)
 
-save_json(USERS_FILE, users)
+    await update.message.reply_text(
+        format_card(card)
+    )
 
-await update.message.reply_text(
-format_card(card)
-)
+
 #==========================
-#GAME FUNCTIONS
+# GAME FUNCTIONS
 #==========================
 
 def new_game():
+    numbers = list(range(1, 76))
+    random.shuffle(numbers)
 
-numbers = list(range(1, 76))
-random.shuffle(numbers)
+    game["started"] = True
+    game["numbers"] = numbers
+    game["called_numbers"] = []
+    game["winner"] = None
 
-game["started"] = True
-game["numbers"] = numbers
-game["called_numbers"] = []
-game["winner"] = None
+    save_json(GAME_FILE, game)
 
-save_json(GAME_FILE, game)
+
+
 
 
 async def call_next_number(context: ContextTypes.DEFAULT_TYPE):
