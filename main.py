@@ -170,14 +170,13 @@ async def get_full_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = str(update.effective_user.id)
 
-if user_id not in users:
-if user_id not in users:
-    users[user_id] = {}
+    if user_id not in users:
+        users[user_id] = {}
 
-users[user_id]["telegram_id"] = update.effective_user.id
-users[user_id]["username"] = update.effective_user.username
-users[user_id]["full_name"] = full_name
-users[user_id]["language"] = context.user_data["language"]
+    users[user_id]["telegram_id"] = update.effective_user.id
+    users[user_id]["username"] = update.effective_user.username
+    users[user_id]["full_name"] = full_name
+    users[user_id]["language"] = context.user_data["language"]
 
 save_json(USERS_FILE, users)
 
