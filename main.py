@@ -680,13 +680,13 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     return ConversationHandler.END
 
-
 def main():
     app = (
         ApplicationBuilder()
-        .token(BOT_TOKEN)
+        .token(TOKEN)
         .build()
     )
+
 
 
 # Registration Conversation
