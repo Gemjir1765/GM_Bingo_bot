@@ -171,7 +171,8 @@ async def get_full_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = str(update.effective_user.id)
 
 if user_id not in users:
-users[user_id] = {}
+if user_id not in users:
+    users[user_id] = {}
 
 users[user_id]["telegram_id"] = update.effective_user.id
 users[user_id]["username"] = update.effective_user.username
@@ -183,16 +184,16 @@ save_json(USERS_FILE, users)
 language = context.user_data["language"]
 
 keyboard = ReplyKeyboardMarkup(
-[
-[
-KeyboardButton(
-"📱 Share Phone Number",
-request_contact=True
-)
- ]
-],
-resize_keyboard=True,
-one_time_keyboard=True
+    [
+        [
+            KeyboardButton(
+                "📱 Share Phone Number",
+                request_contact=True
+            )
+        ]
+    ],
+    resize_keyboard=True,
+    one_time_keyboard=True
 )
 
 if language == "or":
