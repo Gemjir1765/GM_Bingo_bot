@@ -196,17 +196,17 @@ keyboard = ReplyKeyboardMarkup(
 )
 
 if language == "or":
-text = "📱 Mee lakkoofsa bilbilaa kee Share Phone Number jedhu tuquun ergi."
+    text = "📱 Mee lakkoofsa bilbilaa kee Share Phone Number jedhu tuquun ergi."
 
 elif language == "en":
-text = "📱 Please tap Share Phone Number to send your phone number."
+    text = "📱 Please tap Share Phone Number to send your phone number."
 
 else:
-text = "📱 እባክዎ Share Phone Number በመጫን ስልክ ቁጥርዎን ይላኩ።"
+    text = "📱 እባክዎ Share Phone Number በመጫን ስልክ ቁጥርዎን ይላኩ።"
 
 await update.message.reply_text(
-text,
-reply_markup=keyboard
+    text,
+    reply_markup=keyboard
 )
 
 return PHONE
