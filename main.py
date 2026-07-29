@@ -314,41 +314,37 @@ async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #==========================
 
 def generate_card():
+    card = {
+        "B": random.sample(range(1, 16), 5),
+        "I": random.sample(range(16, 31), 5),
+        "N": random.sample(range(31, 46), 5),
+        "G": random.sample(range(46, 61), 5),
+        "O": random.sample(range(61, 76), 5)
+    }
 
-card = {
-"B": random.sample(range(1, 16), 5),
-"I": random.sample(range(16, 31), 5),
-"N": random.sample(range(31, 46), 5),
-"G": random.sample(range(46, 61), 5),
-"O": random.sample(range(61, 76), 5)
-}
+    card["N"][2] = "FREE"
 
-card["N"][2] = "FREE"
-
-return card
+    return card
 
 
 def format_card(card):
+    text = "🎲 GM BINGO CARD\n\n"
+    text += " B I N G O\n\n"
 
-text = "🎲 GM BINGO CARD\n\n"
-text += " B I N G O\n\n"
+    for i in range(5):
+        row = []
 
-for i in range(5):
+        for col in ["B", "I", "N", "G", "O"]:
+            value = card[col][i]
 
-row = []
+            if value == "FREE":
+                row.append("FREE")
+            else:
+                row.append(f"{value:02}")
 
-for col in ["B", "I", "N", "G", "O"]:
+        text += " | ".join(row) + "\n"
 
-value = card[col][i]
-
-if value == "FREE":
-row.append("FREE")
-else:
-row.append(f"{value:02}")
-
-text += " | ".join(row) + "\n"
-
-return text
+    return text
 
 
 async def generate_bingo_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
