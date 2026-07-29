@@ -216,34 +216,35 @@ async def get_full_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-contact = update.message.contact
+    contact = update.message.contact
 
-if contact is None:
-await update.message.reply_text(
-"❌ Please use the Share Phone Number button."
-)
-return PHONE
+    if contact is None:
+        await update.message.reply_text(
+            "❌ Please use the Share Phone Number button."
+        )
+        return PHONE
 
-user_id = str(update.effective_user.id)
+    user_id = str(update.effective_user.id)
 
-users[user_id]["phone"] = contact.phone_number
+    users[user_id]["phone"] = contact.phone_number
 
-save_json(USERS_FILE, users)
+    save_json(USERS_FILE, users)
 
-language = context.user_data["language"]
+    language = context.user_data["language"]
 
-keyboard = ReplyKeyboardMarkup(
-[
-[
-KeyboardButton(
-"📍 Share Location",
-request_location=True
-)
- ]
-],
-resize_keyboard=True,
-one_time_keyboard=True
-)
+    keyboard = ReplyKeyboardMarkup(
+        [
+            [
+                KeyboardButton(
+                    "📍 Share Location",
+                    request_location=True
+                )
+            ]
+        ],
+        resize_keyboard=True,
+        one_time_keyboard=True
+    )
+
 
 if language == "or":
 text = "📍 Mee Share Location jedhu tuquun iddoo kee ergi."
