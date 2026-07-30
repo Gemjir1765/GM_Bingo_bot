@@ -307,7 +307,7 @@ async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(text)
 
     # Kaardii Bingo uumuuf
-    await generate_bingo_card(update, context)
+    # await generate_bingo_card(update, context)
 
     return ConversationHandler.END
 
