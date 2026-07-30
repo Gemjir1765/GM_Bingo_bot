@@ -268,8 +268,7 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #==========================
 
 async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    location = update.message.location
-
+    location = update.message.text.strip()
     if location is None:
         await update.message.reply_text(
             "❌ Please use the Share Location button."
@@ -277,9 +276,8 @@ async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return LOCATION
 
     user_id = str(update.effective_user.id)
-
-    users[user_id]["latitude"] = location.latitude
-    users[user_id]["longitude"] = location.longitude
+    users[user_id]["location"] = location
+    
     users[user_id]["registered"] = True
 
     save_json(USERS_FILE, users)
@@ -723,9 +721,11 @@ def main():
             ],
 
             LOCATION: [
-                MessageHandler(
-                    filters.LOCATION,
-                    get_location
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        get_location
+    )
+]
                 )
             ]
         },
