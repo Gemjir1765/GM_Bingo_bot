@@ -700,35 +700,31 @@ def main():
 
         states={
 
-            LANGUAGE: [
-                CallbackQueryHandler(
-                    language_callback
-                )
-            ],
+    LANGUAGE: [
+        CallbackQueryHandler(language_callback)
+    ],
 
-            FULL_NAME: [
-                MessageHandler(
-                    filters.TEXT & ~filters.COMMAND,
-                    get_full_name
-                )
-            ],
+    FULL_NAME: [
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            get_full_name
+        )
+    ],
 
-            PHONE: [
-                MessageHandler(
-                    filters.CONTACT,
-                    get_phone
-                )
-            ],
+    PHONE: [
+        MessageHandler(
+            filters.CONTACT,
+            get_phone
+        )
+    ],
 
-            LOCATION: [
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        get_location
-    )
-]
-                )
-            ]
-        },
+    LOCATION: [
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            get_location
+        )
+    ]
+},
 
         fallbacks=[
             CommandHandler(
