@@ -302,17 +302,48 @@ async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "🎉 ወደ GM Bingo እንኳን በደህና መጡ!"
         )
 
-    await update.message.reply_text(text)
+# Kaardii Bingo uumuuf
+# await generate_bingo_card(update, context)
 
-    # Kaardii Bingo uumuuf
-    # await generate_bingo_card(update, context)
-
+return ConversationHandler.END
+async def get_location(...):
+    ...
     return ConversationHandler.END
 
+
+# bakka kana booda galchi
+
+
+async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "🎫 Buy Card\n\n"
+        "Kaardii Bingo filachuuf qophaa'aa."
+    )
+    keyboard = [
+    ["🎫 Buy Card", "💰 Wallet"],
+    ["🎮 My Cards", "🏆 Winners"],
+    ["💸 Withdraw", "⚙️ Settings"],
+    ["📞 Support"]
+]
+
+reply_markup = ReplyKeyboardMarkup(
+    keyboard,
+    resize_keyboard=True,
+    one_time_keyboard=False
+)
+
+await update.message.reply_text(
+    text,
+    reply_markup=reply_markup
+)
+async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "🎫 Kaardii Bingo filachuuf qophaa'aa...\n\n"
+        "Amma sirna kaardii 400 itti aanu irratti ijaarra."
+    )
 #==========================
 #BINGO CARD
 #==========================
-
 def generate_card():
     card = {
         "B": random.sample(range(1, 16), 5),
@@ -734,38 +765,43 @@ def main():
         ]
     )
 
+# User handlers
 
-    # User handlers
+app.add_handler(conv_handler)
 
-    app.add_handler(conv_handler)
-
-    app.add_handler(
-        CommandHandler(
-            "bingo",
-            claim_bingo
-        )
+app.add_handler(
+    CommandHandler(
+        "bingo",
+        claim_bingo
     )
+)
 
-
-    # Admin handlers
-
-    app.add_handler(
-        CommandHandler(
-            "start_game",
-            start_game
-        )
+app.add_handler(
+    MessageHandler(
+        filters.Regex("^🎫 Buy Card$"),
+        buy_card
     )
+)
 
-    app.add_handler(
-        CommandHandler(
-            "next",
-            next_number
-        )
+
+# Admin handlers
+
+app.add_handler(
+    CommandHandler(
+        "start_game",
+        start_game
     )
+)
 
+app.add_handler(
+    CommandHandler(
+        "next",
+        next_number
+    )
+)
 
-    print("GM Bingo Bot started...")
-
+print("GM Bingo Bot started...")
+    
 
     app.run_polling()
 
