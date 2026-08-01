@@ -338,22 +338,24 @@ return ConversationHandler.END
 #==========================
 # BUY CARD
 #==========================
-
 async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     await update.message.reply_text(
         "🎫 Buy Card\n\n"
         "Kaardii Bingo filachuuf qophaa'i"
+    )
 
-reply_markup = ReplyKeyboardMarkup(
-    keyboard,
-    resize_keyboard=True,
-    one_time_keyboard=False
-)
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard,
+        resize_keyboard=True,
+        one_time_keyboard=False
+    )
 
-await update.message.reply_text(
-    text,
-    reply_markup=reply_markup
-)
+    await update.message.reply_text(
+        text,
+        reply_markup=reply_markup
+    )
+
 async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🎫 Kaardii Bingo filachuuf qophaa'aa...\n\n"
