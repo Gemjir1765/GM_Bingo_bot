@@ -755,33 +755,34 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Mee baay'ina kaardii barbaaddu filadhu.",
         reply_markup=reply_markup
     )
-
 async def card_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-choice = update.message.text
+    choice = update.message.text
 
-prices = {
-"1 Card": 10,
-"2 Cards": 20,
-"3 Cards": 30,
-"5 Cards": 50
-}
+    prices = {
+        "1 Card": 10,
+        "2 Cards": 20,
+        "3 Cards": 30,
+        "5 Cards": 50
+    }
 
-if choice not in prices:
-return
+    if choice not in prices:
+        return
 
-amount = prices[choice]
+    amount = prices[choice]
 
-context.user_data["card_quantity"] = choice
-context.user_data["card_price"] = amount
+    context.user_data["card_quantity"] = choice
+    context.user_data["card_price"] = amount
 
-await update.message.reply_text(
-f"🎫 Filannoo kee:\n\n"
-f"Kaardii: {choice}\n"
-f"Gatii: {amount} birr\n\n"
-"Kaffaltii erga gootee booda proof/payment ragaa ergi."
-)
-ADMIN_ID = 123456789 # Lakkoofsa Telegram ID admin kee as kaa'i
+    await update.message.reply_text(
+        f"🎫 Filannoo kee:\n\n"
+        f"Kaardii: {choice}\n"
+        f"Gatii: {amount} birr\n\n"
+        "Kaffaltii erga gootee booda proof/payment ragaa ergi."
+    )
+
+
+ADMIN_ID = 6602052739
 
 
 async def payment_proof(update: Update, context: ContextTypes.DEFAULT_TYPE):
