@@ -736,91 +736,57 @@ def main():
         .build()
     )
 
-
-
-# Registration Conversation
-
+    # Registration Conversation
     conv_handler = ConversationHandler(
-
         entry_points=[
-            CommandHandler(
-                "start",
-                start
-            )
+            CommandHandler("start", start)
         ],
-
         states={
-
-    LANGUAGE: [
-        CallbackQueryHandler(language_callback)
-    ],
-
-    FULL_NAME: [
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            get_full_name
-        )
-    ],
-
-    PHONE: [
-        MessageHandler(
-            filters.CONTACT,
-            get_phone
-        )
-    ],
-
-    LOCATION: [
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            get_location
-        )
-    ]
-},
-
+            LANGUAGE: [
+                CallbackQueryHandler(language_callback)
+            ],
+            FULL_NAME: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    get_full_name
+                )
+            ],
+            PHONE: [
+                MessageHandler(
+                    filters.CONTACT,
+                    get_phone
+                )
+            ],
+            LOCATION: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND,
+                    get_location
+                )
+            ],
+        },
         fallbacks=[
-            CommandHandler(
-                "cancel",
-                cancel
-            )
+            CommandHandler("cancel", cancel)
         ]
     )
 
-# User handlers
-app.add_handler(conv_handler)
-
-app.add_handler(
-    CommandHandler(
-        "bingo",
-        claim_bingo
+    # User handlers
+    app.add_handler(conv_handler)
+    app.add_handler(CommandHandler("bingo", claim_bingo))
+    app.add_handler(
+        MessageHandler(
+            filters.Regex("^🎫 Buy Card$"),
+            buy_card
+        )
     )
-)
 
-app.add_handler(
-    MessageHandler(
-        filters.Regex("^🎫 Buy Card$"),
-        buy_card
-    )
-)
+    # Admin handlers
+    app.add_handler(CommandHandler("start_game", start_game))
+    app.add_handler(CommandHandler("next", next_number))
 
-# Admin handlers
-app.add_handler(
-    CommandHandler(
-        "start_game",
-        start_game
-    )
-)
-
-app.add_handler(
-    CommandHandler(
-        "next",
-        next_number
-    )
-)
-
-print("GM Bingo Bot started...")
-
-app.run_polling()
+    print("GM Bingo Bot started...")
+    app.run_polling()
 
 
 if __name__ == "__main__":
     main()
+        
