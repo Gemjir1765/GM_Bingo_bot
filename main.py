@@ -786,7 +786,6 @@ def main():
     )
 
 # User handlers
-
 app.add_handler(conv_handler)
 
 app.add_handler(
@@ -803,9 +802,7 @@ app.add_handler(
     )
 )
 
-
 # Admin handlers
-
 app.add_handler(
     CommandHandler(
         "start_game",
@@ -821,9 +818,8 @@ app.add_handler(
 )
 
 print("GM Bingo Bot started...")
-    
 
-    app.run_polling()
+app.run_polling()
 
 
 if __name__ == "__main__":
