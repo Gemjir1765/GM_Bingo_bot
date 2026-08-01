@@ -306,25 +306,43 @@ async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # await generate_bingo_card(update, context)
 
 return ConversationHandler.END
-async def get_location(...):
-    ...
-    return ConversationHandler.END
-
-
-# bakka kana booda galchi
-
-
-async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🎫 Buy Card\n\n"
-        "Kaardii Bingo filachuuf qophaa'aa."
-    )
-    keyboard = [
+keyboard = [
     ["🎫 Buy Card", "💰 Wallet"],
     ["🎮 My Cards", "🏆 Winners"],
     ["💸 Withdraw", "⚙️ Settings"],
     ["📞 Support"]
 ]
+
+reply_markup = ReplyKeyboardMarkup(
+    keyboard,
+    resize_keyboard=True,
+    one_time_keyboard=False
+)
+
+await update.message.reply_text(
+    text,
+    reply_markup=reply_markup
+)
+
+# Kaardii Bingo uumuuf
+# await generate_bingo_card(update, context)
+
+return ConversationHandler.END
+
+# Kaardii Bingo uumuuf
+# await generate_bingo_card(update, context)
+
+return ConversationHandler.END
+
+
+#==========================
+# BUY CARD
+#==========================
+
+async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "🎫 Buy Card\n\n"
+        "Kaardii Bingo filachuuf qophaa'i"
 
 reply_markup = ReplyKeyboardMarkup(
     keyboard,
