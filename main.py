@@ -735,26 +735,27 @@ def main():
         .token(TOKEN)
         .build()
     )
-
 async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
-keyboard = [
-["1 Card"],
-["2 Cards"],
-["3 Cards"],
-["5 Cards"],
-["🔙 Back"]
-]
 
-reply_markup = ReplyKeyboardMarkup(
-keyboard,
-resize_keyboard=True
-)
+    keyboard = [
+        ["1 Card"],
+        ["2 Cards"],
+        ["3 Cards"],
+        ["5 Cards"],
+        ["🔙 Back"]
+    ]
 
-await update.message.reply_text(
-"🎫 Buy Bingo Card\n\n"
-"Mee baay'ina kaardii barbaaddu filadhu.",
-reply_markup=reply_markup
-)
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard,
+        resize_keyboard=True
+    )
+
+    await update.message.reply_text(
+        "🎫 Buy Bingo Card\n\n"
+        "Mee baay'ina kaardii barbaaddu filadhu.",
+        reply_markup=reply_markup
+    )
+
 async def card_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 choice = update.message.text
