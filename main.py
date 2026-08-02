@@ -65,7 +65,6 @@ def init_db():
 
     conn.close()
 
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
@@ -79,12 +78,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     context.user_data["step"] = "name"
 
-    async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
     text = update.message.text
-
 
     if context.user_data.get("step") == "name":
 
@@ -97,6 +96,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         return
+
 
 
     if context.user_data.get("step") == "phone":
