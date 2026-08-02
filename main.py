@@ -16,7 +16,7 @@ import sqlite3
 # =========================
 
 # Admin Telegram ID
-ADMIN_ID = 123456789
+ADMIN_ID = 6602052739
 
 
 # Users / Players data
