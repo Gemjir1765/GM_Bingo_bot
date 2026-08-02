@@ -781,43 +781,39 @@ async def card_quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Kaffaltii erga gootee booda proof/payment ragaa ergi."
     )
 
-
 ADMIN_ID = 6602052739
-
-
 async def payment_proof(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-proof = update.message.text
+    proof = update.message.text
 
-quantity = context.user_data.get("card_quantity")
-amount = context.user_data.get("card_price")
+    quantity = context.user_data.get("card_quantity")
+    amount = context.user_data.get("card_price")
 
-if not quantity or not amount:
+    if not quantity or not amount:
+        await update.message.reply_text(
+            "❌ Dura kaardii filadhu."
+        )
+        return
+
+    user = update.effective_user
+
+    message = (
+        "💳 New Card Purchase Request\n\n"
+        f"👤 User: {user.full_name}\n"
+        f"🆔 ID: {user.id}\n"
+        f"🎫 Card: {quantity}\n"
+        f"💰 Amount: {amount} birr\n\n"
+        f"🧾 Payment Proof:\n{proof}"
+    )
+ await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=message
+    )
+
 await update.message.reply_text(
-"❌ Dura kaardii filadhu."
-)
-return
-
-user = update.effective_user
-
-message = (
-"💳 New Card Purchase Request\n\n"
-f"👤 User: {user.full_name}\n"
-f"🆔 ID: {user.id}\n"
-f"🎫 Card: {quantity}\n"
-f"💰 Amount: {amount} birr\n\n"
-f"🧾 Payment Proof:\n{proof}"
-)
-
-await context.bot.send_message(
-chat_id=ADMIN_ID,
-text=message
-)
-
-await update.message.reply_text(
-"✅ Kaffaltiin kee ergameera.\n"
-"Admin mirkaneessu eegaa."
-)
+        "✅ Kaffaltiin kee ergameera.\n"
+        "Admin mirkaneessu eegaa."
+    )
 async def admin_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 query = update.callback_query
