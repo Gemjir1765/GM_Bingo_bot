@@ -815,40 +815,37 @@ await update.message.reply_text(
         "Admin mirkaneessu eegaa."
     )
 async def admin_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
 
-query = update.callback_query
-await query.answer()
+    data = query.data
+    user_id = data.split("_")[2]
 
-data = query.data
+    if data.startswith("approve"):
+        await context.bot.send_message(
+            chat_id=int(user_id),
+            text=(
+                "✅ Kaffaltiin kee mirkanaa'eera.\n\n"
+                "🎫 Kaardiin kee qophaa'aa jira."
+            )
+        )
 
-user_id = data.split("_")[2]
+        await query.edit_message_text(
+            "✅ Payment Approved"
+        )
 
-if data.startswith("approve"):
-await context.bot.send_message(
-chat_id=int(user_id),
-text=(
-"✅ Kaffaltiin kee mirkanaa'eera.\n\n"
-"🎫 Kaardiin kee qophaa'aa jira."
-)
-)
+    elif data.startswith("reject"):
+        await context.bot.send_message(
+            chat_id=int(user_id),
+            text=(
+                "❌ Kaffaltiin kee hin mirkanoofne.\n"
+                "Mee irra deebi'i."
+            )
+        )
 
-await query.edit_message_text(
-"✅ Payment Approved"
-)
-
-elif data.startswith("reject"):
-
-await context.bot.send_message(
-chat_id=int(user_id),
-text=(
-"❌ Kaffaltiin kee hin mirkanoofne.\n"
-"Mee irra deebi'i."
-)
-)
-
-await query.edit_message_text(
-"❌ Payment Rejected"
-)
+        await query.edit_message_text(
+            "❌ Payment Rejected"
+        )
 keyboard = [
 [
 InlineKeyboardButton(
@@ -871,38 +868,56 @@ reply_markup=reply_markup
 )
 import random
 
-
 def generate_card():
+    card = {
+        "B": random.sample(range(1, 16), 5),
+        "I": random.sample(range(16, 31), 5),
+        "N": random.sample(range(31, 46), 5),
+        "G": random.sample(range(46, 61), 5),
+        "O": random.sample(range(61, 76), 5)
+    }
 
-card = {
-"B": random.sample(range(1, 16), 5),
-"I": random.sample(range(16, 31), 5),
-"N": random.sample(range(31, 46), 5),
-"G": random.sample(range(46, 61), 5),
-"O": random.sample(range(61, 76), 5)
-}
-
-return card
-
+    return card
 
 def format_card(card):
+    text = "🎫 Your Bingo Card\n\n"
+    text += " B   I   N   G   O\n"
 
-text = "🎫 Your Bingo Card\n\n"
+    for i in range(5):
+        row = (
+            f"{card['B'][i]}  "
+            f"{card['I'][i]}  "
+            f"{card['N'][i]}  "
+            f"{card['G'][i]}  "
+            f"{card['O'][i]}"
+        )
 
-text += " B I N G O\n"
+        text += row + "\n"
+return text
+"❌ Ati admin miti."
+)
+return
 
-for i in range(5):
-row = (
-f"{card['B'][i]} "
-f"{card['I'][i]} "
-f"{card['N'][i]} "
-f"{card['G'][i]} "
-f"{card['O'][i]}"
+
+keyboard = [
+["📊 Statistics"],
+["💸 Withdraw Requests"],
+["🎮 Start Game"],
+["🔢 Next Number"],
+["📢 Broadcast"]
+]
+
+
+reply_markup = ReplyKeyboardMarkup(
+keyboard,
+resize_keyboard=True
 )
 
-text += row + "\n"
 
-return text
+await update.message.reply_text(
+"👑 Admin Dashboard",
+reply_markup=reply_markup
+)
 async def my_cards(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 user_id = update.effective_user.id
@@ -979,14 +994,10 @@ await update.message.reply_text(
 "❌ Balance kee caala."
 )
 return
-
-
 withdraw_requests[user_id] = {
 "amount": amount,
 "status": "pending"
 }
-
-
 await context.bot.send_message(
 chat_id=ADMIN_ID,
 text=(
@@ -996,8 +1007,6 @@ f"Amount: {amount} birr\n\n"
 "Approve ykn Reject godhi."
 )
 )
-
-
 await update.message.reply_text(
 "✅ Withdraw request ergameera.\n"
 "Admin mirkaneessa."
@@ -1011,44 +1020,17 @@ user_id = update.effective_user.id
 
 if not is_admin(user_id):
 await update.message.reply_text(
-"❌ Ati admin miti."
-)
-return
 
-
-keyboard = [
-["📊 Statistics"],
-["💸 Withdraw Requests"],
-["🎮 Start Game"],
-["🔢 Next Number"],
-["📢 Broadcast"]
-]
-
-
-reply_markup = ReplyKeyboardMarkup(
-keyboard,
-resize_keyboard=True
-)
-
-
-await update.message.reply_text(
-"👑 Admin Dashboard",
-reply_markup=reply_markup
-)
 async def admin_statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if not is_admin(update.effective_user.id):
 return
-
-
 users = len(user_wallet)
 
 cards = sum(
 len(value)
 for value in user_cards.values()
 )
-
-
 await update.message.reply_text(
 "📊 GM Bingo Statistics\n\n"
 f"👥 Users: {users}\n"
@@ -1065,13 +1047,9 @@ await update.message.reply_text(
 "✅ Withdraw request hin jiru."
 )
 return
-
-
 text = "💸 Pending Withdraw Requests\n\n"
 
 keyboard = []
-
-
 for user_id, data in withdraw_requests.items():
 
 if data["status"] == "pending":
@@ -1093,10 +1071,7 @@ callback_data=f"withdraw_no_{user_id}"
 )
  ]
 )
-
-
 reply_markup = InlineKeyboardMarkup(keyboard)
-
 
 await update.message.reply_text(
 text,
@@ -1112,7 +1087,6 @@ data = query.data
 
 user_id = int(data.split("_")[2])
 
-
 if data.startswith("withdraw_ok"):
 
 amount = withdraw_requests[user_id]["amount"]
@@ -1120,8 +1094,6 @@ amount = withdraw_requests[user_id]["amount"]
 user_wallet[user_id] -= amount
 
 withdraw_requests[user_id]["status"] = "approved"
-
-
 await context.bot.send_message(
 chat_id=user_id,
 text=(
@@ -1129,28 +1101,19 @@ text=(
 f"💰 Amount: {amount} birr"
 )
 )
-
-
 await query.edit_message_text(
 "✅ Withdraw Approved"
 )
-
-
 elif data.startswith("withdraw_no"):
 
 withdraw_requests[user_id]["status"] = "rejected"
-
-
 await context.bot.send_message(
 chat_id=user_id,
 text="❌ Withdraw request kee diddatameera."
 )
-
-
 await query.edit_message_text(
 "❌ Withdraw Rejected"
 )
-
 async def broadcast_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if not is_admin(update.effective_user.id):
@@ -1167,13 +1130,8 @@ admin_id = update.effective_user.id
 
 if not broadcast_mode.get(admin_id):
 return
-
-
 message = update.message.text
-
-
 for user_id in user_wallet.keys():
-
 try:
 await context.bot.send_message(
 chat_id=user_id,
@@ -1182,14 +1140,9 @@ text=(
 f"{message}"
 )
 )
-
 except:
 pass
-
-
 broadcast_mode[admin_id] = False
-
-
 await update.message.reply_text(
 "✅ Message users hundaaf ergameera."
 )
@@ -1199,38 +1152,25 @@ global game_active, called_numbers
 
 if not is_admin(update.effective_user.id):
 return
-
-
 game_active = True
 called_numbers = []
-
-
 await update.message.reply_text(
 "🎮 Bingo Game Started!"
 )
 async def next_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
 global called_numbers
-
-
 if not is_admin(update.effective_user.id):
 return
-
-
 if not game_active:
 
 await update.message.reply_text(
 "❌ Game hin jalqabne."
 )
 return
-
-
 available = [
 n for n in range(1,76)
 if n not in called_numbers
  ]
-
-
 if not available:
 await update.message.reply_text(
 "Game xumurameera."
