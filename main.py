@@ -520,3 +520,80 @@ def format_card(card):
 
 
     context.user_data.clear()
+    if __name__ == "__main__":
+
+    init_db()
+
+
+    app = Application.builder().token(
+        "TOKEN_KEE"
+    ).build()
+
+
+    # Start
+    app.add_handler(
+        CommandHandler("start", start)
+    )
+
+
+    # Buy Card
+    app.add_handler(
+        CommandHandler("buy", buy_card)
+    )
+
+
+    # Admin Dashboard
+    app.add_handler(
+        CommandHandler("admin", admin_dashboard)
+    )
+
+
+    # Admin Commands
+    app.add_handler(
+        CommandHandler("start_game", start_game)
+    )
+
+    app.add_handler(
+        CommandHandler("next", next_number)
+    )
+
+    app.add_handler(
+        CommandHandler("stats", statistics)
+    )
+
+
+    # Player Bingo Check
+    app.add_handler(
+        CommandHandler("bingo", check_bingo)
+    )
+
+
+    # Text Handlers
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            register_user
+        )
+    )
+
+
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            admin_buttons
+        )
+    )
+
+
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            send_broadcast
+        )
+    )
+
+
+    print("🤖 Bingo Bot Started...")
+
+
+    app.run_polling()
