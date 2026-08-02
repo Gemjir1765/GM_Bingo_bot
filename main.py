@@ -164,7 +164,6 @@ def generate_card():
 
     return card
 
-
 async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
@@ -172,20 +171,19 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
     card = generate_card()
 
     if user_id not in players:
-
         players[user_id] = {
             "cards": []
         }
 
-
     players[user_id]["cards"].append(card)
-
 
     await update.message.reply_text(
         "🎫 Kaardiin kee qophaa'eera!\n\n"
-        f"{card}"
+        f"{format_card(card)}"
     )
-    def format_card(card):
+
+
+def format_card(card):
 
     text = "🎫 BINGO CARD\n\n"
     text += " B     I     N     G     O\n"
@@ -202,6 +200,7 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
         text += row + "\n"
 
     return text
+
     async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
