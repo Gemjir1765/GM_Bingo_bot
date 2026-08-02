@@ -9,18 +9,47 @@ from telegram.ext import (
 
 import random
 import sqlite3
-# Game Variables
 
+
+# =========================
+# GLOBAL VARIABLES
+# =========================
+
+# Admin Telegram ID
+ADMIN_ID = 123456789
+
+
+# Users / Players data
 players = {}
 
+
+# Bingo called numbers
 called_numbers = []
 
+
+# Winners list
 winners = []
 
+
+# Game status
 game_running = False
+
+
+# User registration steps
+user_steps = {}
+
+
+# Database name
+DATABASE = "bingo.db"
+
+
+# =========================
+# DATABASE
+# =========================
+
 def init_db():
 
-    conn = sqlite3.connect("bingo.db")
+    conn = sqlite3.connect(DATABASE)
 
     cursor = conn.cursor()
 
