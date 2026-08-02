@@ -163,13 +163,13 @@ def generate_card():
     card["N"][2] = "FREE"
 
     return card
-    async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
-
     card = generate_card()
-
 
     if user_id not in players:
 
