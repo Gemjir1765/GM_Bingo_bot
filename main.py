@@ -86,14 +86,13 @@ game = load_json(GAME_FILE)
 #==========================
 #DEFAULT GAME DATA
 #==========================
-
 if not game:
-   game = {
-     "started": False,
-     "numbers": [],
-     "called_numbers": [],
-     "winner": None
-}
+    game = {
+        "started": False,
+        "numbers": [],
+        "called_numbers": [],
+        "winner": None
+    }
 
 save_json(GAME_FILE, game)
 #==========================
@@ -268,44 +267,32 @@ async def get_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #==========================
 
 async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    location = update.message.text.strip()
-    if location is None:
+async def get_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    if update.message.location is None:
         await update.message.reply_text(
             "❌ Please use the Share Location button."
         )
         return LOCATION
 
+    location = update.message.location
+
     user_id = str(update.effective_user.id)
-    users[user_id]["location"] = location
-    
+
+    users[user_id]["location"] = {
+        "latitude": location.latitude,
+        "longitude": location.longitude
+    }
+
     users[user_id]["registered"] = True
 
     save_json(USERS_FILE, users)
 
-    language = context.user_data["language"]
+    await update.message.reply_text(
+        "✅ Galmeen kee milkaa'eera."
+    )
 
-    if language == "or":
-        text = (
-            "✅ Galmeen kee milkaa'eera.\n\n"
-            "🎉 Gara tapha GM Bingo baga nagaan dhuftan!"
-        )
-
-    elif language == "en":
-        text = (
-            "✅ Registration completed successfully.\n\n"
-            "🎉 Welcome to GM Bingo!"
-        )
-
-    else:
-        text = (
-            "✅ ምዝገባዎ በተሳካ ሁኔታ ተጠናቋል።\n\n"
-            "🎉 ወደ GM Bingo እንኳን በደህና መጡ!"
-        )
-
-# Kaardii Bingo uumuuf
-# await generate_bingo_card(update, context)
-
-return ConversationHandler.END
+    return ConversationHandler.END
 keyboard = [
     ["🎫 Buy Card", "💰 Wallet"],
     ["🎮 My Cards", "🏆 Winners"],
@@ -662,25 +649,27 @@ async def finish_round(context, total_amount):
 #==========================
 #WINNERS MANAGEMENT
 #==========================
-
 def add_winner(user_id):
     if "winners" not in game:
         game["winners"] = []
 
-    # Namni tokko yeroo lama akka hin galmoofne
     for winner in game["winners"]:
         if winner["user_id"] == user_id:
             return False
 
+    name = users.get(str(user_id), {}).get(
+        "full_name",
+        "Unknown"
+    )
+
     game["winners"].append({
         "user_id": user_id,
-        "name": users[user_id]["full_name"]
+        "name": name
     })
 
     save_json(GAME_FILE, game)
 
     return True
-
 
 #==========================
 #NEW ROUND
@@ -691,9 +680,9 @@ def reset_round():
     game["numbers"] = []
     game["called_numbers"] = []
     game["winners"] = []
+    game["winner"] = None
 
     save_json(GAME_FILE, game)
-
 
 #==========================
 # ANNOUNCE WINNERS
@@ -717,7 +706,7 @@ async def announce_winners(context):
         text=text
     )
 
-
+ await cont
 #==========================
 # MAIN BOT SETUP
 #==========================
@@ -805,7 +794,7 @@ async def payment_proof(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"💰 Amount: {amount} birr\n\n"
         f"🧾 Payment Proof:\n{proof}"
     )
- await context.bot.send_message(
+ext.bot.send_message(
         chat_id=ADMIN_ID,
         text=message
     )
@@ -845,7 +834,7 @@ async def admin_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await query.edit_message_text(
             "❌ Payment Rejected"
-        )
+        
 keyboard = [
 [
 InlineKeyboardButton(
@@ -958,7 +947,8 @@ await update.message.reply_text(
 f"💰 Balance kee:\n\n"
 f"{amount} birr"
 )
-async def withdraw(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+text=(async def withdraw(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 user_id = update.effective_user.id
 
@@ -1000,7 +990,6 @@ withdraw_requests[user_id] = {
 }
 await context.bot.send_message(
 chat_id=ADMIN_ID,
-text=(
 "💸 New Withdraw Request\n\n"
 f"User ID: {user_id}\n"
 f"Amount: {amount} birr\n\n"
@@ -1256,7 +1245,6 @@ f"Prize: {WINNER_PRIZE} birr"
 )
 
 return
-
 
 await update.message.reply_text(
 "❌ Amma Bingo hin xumurre."
