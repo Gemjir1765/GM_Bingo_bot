@@ -42,7 +42,6 @@ user_steps = {}
 # Database name
 DATABASE = "bingo.db"
 
-
 # =========================
 # DATABASE
 # =========================
@@ -65,7 +64,9 @@ def init_db():
     conn.commit()
 
     conn.close()
-    async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
@@ -77,6 +78,7 @@ def init_db():
     )
 
     context.user_data["step"] = "name"
+
     async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
