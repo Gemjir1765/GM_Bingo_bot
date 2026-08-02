@@ -69,6 +69,8 @@ def init_db():
 
     user_id = update.effective_user.id
 
+    user_steps[user_id] = "name"
+
     await update.message.reply_text(
         "👋 Baga nagaan dhuftan!\n\n"
         "Maqaa keessan barreessaa."
