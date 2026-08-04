@@ -242,7 +242,8 @@ async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "👑 Admin Dashboard",
         reply_markup=reply_markup
     )
-    async def start_game(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def start_game(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
@@ -253,7 +254,6 @@ async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         return
-
 
     global game_running, called_numbers, winners
 
@@ -263,13 +263,11 @@ async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     winners.clear()
 
-
     await update.message.reply_text(
         "🎮 Taphaan Bingo jalqabameera!\n\n"
         "🔢 Lakkoofsa waamuuf qophiidha."
-        
     )
-    async def next_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def next_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
@@ -281,9 +279,7 @@ async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
-
     global called_numbers, game_running
-
 
     if not game_running:
 
@@ -293,7 +289,6 @@ async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
-
     if len(called_numbers) >= 75:
 
         await update.message.reply_text(
@@ -301,7 +296,6 @@ async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         return
-
 
     while True:
 
@@ -313,12 +307,12 @@ async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             break
 
-
     await update.message.reply_text(
         f"🔔 Lakkoofsi haaraan:\n\n"
         f"🎱 {number}\n\n"
         f"📋 Waamaman:\n{called_numbers}"
-        async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    )
+async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
