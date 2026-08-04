@@ -207,33 +207,27 @@ def format_card(card):
 
     card = generate_card()
 
-
     if user_id not in players:
-
         players[user_id] = {
             "cards": []
         }
 
-
     players[user_id]["cards"].append(card)
-
 
     await update.message.reply_text(
         format_card(card)
     )
-    async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
-
     if user_id != ADMIN_ID:
-
         await update.message.reply_text(
             "❌ Ati admin miti."
         )
-
         return
-
 
     keyboard = [
         ["🎮 Start Game"],
@@ -242,12 +236,10 @@ def format_card(card):
         ["📢 Broadcast"]
     ]
 
-
     reply_markup = ReplyKeyboardMarkup(
         keyboard,
         resize_keyboard=True
     )
-
 
     await update.message.reply_text(
         "👑 Admin Dashboard",
