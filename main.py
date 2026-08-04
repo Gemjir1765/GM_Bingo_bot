@@ -533,37 +533,28 @@ def format_card(card):
         f"👥 Users: {sent}"
     )
 
-
-    context.user_data.clear()
-    if __name__ == "__main__":
+context.user_data.clear()
+if __name__ == "__main__":
 
     init_db()
-
 
     app = Application.builder().token(
         "TOKEN_KEE"
     ).build()
 
 
-    # Start
     app.add_handler(
         CommandHandler("start", start)
     )
 
-
-    # Buy Card
     app.add_handler(
         CommandHandler("buy", buy_card)
     )
 
-
-    # Admin Dashboard
     app.add_handler(
         CommandHandler("admin", admin_dashboard)
     )
 
-
-    # Admin Commands
     app.add_handler(
         CommandHandler("start_game", start_game)
     )
@@ -576,40 +567,29 @@ def format_card(card):
         CommandHandler("stats", statistics)
     )
 
-
-    # Player Bingo Check
     app.add_handler(
         CommandHandler("bingo", check_bingo)
     )
 
 
-    # Text Handlers
     app.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
             register_user
         )
     )
-    
-app.add_handler(
-    MessageHandler(
-        filters.Regex("^(📊 Statistics|💸 Withdraw Requests|🎮 Start Game|🔢 Next Number|📢 Broadcast)$"),
-        admin_buttons
+
+
+    app.add_handler(
+        MessageHandler(
+            filters.Regex("^(📊 Statistics|💸 Withdraw Requests|🎮 Start Game|🔢 Next Number|📢 Broadcast)$"),
+            admin_buttons
+        )
     )
-)
-
-
-app.add_handler(
-    MessageHandler(
-        filters.Regex("^/broadcast"),
-        send_broadcast
-    )
-)
-
-    
 
 
     print("🤖 Bingo Bot Started...")
 
 
     app.run_polling()
+    
