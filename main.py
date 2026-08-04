@@ -436,7 +436,6 @@ async def admin_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif text == "📢 Broadcast":
         await broadcast(update, context)
 
-
 async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
@@ -461,23 +460,18 @@ async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"🎫 Cards: {total_cards}\n"
         f"🔢 Called Numbers: {called}\n"
         f"🏆 Winners: {total_winners}"
-    )   
-    async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    )
 
+async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
-
     if user_id != ADMIN_ID:
-
         await update.message.reply_text(
             "❌ Ati admin miti."
         )
-
         return
 
-
     context.user_data["broadcast"] = True
-
 
     await update.message.reply_text(
         "📢 Ergaa erguuf barreessi."
