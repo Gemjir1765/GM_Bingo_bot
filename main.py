@@ -1,3 +1,4 @@
+import os
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -508,9 +509,9 @@ async def send_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == "__main__":
     init_db()
 
-    app = Application.builder().token(
-    os.environ["BOT_TOKEN"]
-).build()
+TOKEN = os.environ["BOT_TOKEN"]
+
+app = Application.builder().token(TOKEN).build()
 
     app.add_handler(
         CommandHandler("start", start)
