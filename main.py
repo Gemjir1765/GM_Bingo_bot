@@ -508,8 +508,8 @@ if __name__ == "__main__":
     init_db()
 
     app = Application.builder().token(
-        os.getenv("BOT_TOKEN")
-    ).build()
+    os.environ["BOT_TOKEN"]
+).build()
 
     app.add_handler(
         CommandHandler("start", start)
