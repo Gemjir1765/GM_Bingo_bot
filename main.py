@@ -141,12 +141,24 @@ async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
         conn.commit()
         conn.close()
 
+await update.message.reply_text(
+    "✅ Galmeen keessan xumurameera!\n\n"
+    "🎫 Kaardii Bingo filachuuf qophiidha."
+)
+        
+keyboard = [
+    ["🎫 Filadhu"]
+]
 
-        await update.message.reply_text(
-            "✅ Galmeen keessan xumurameera!\n\n"
-            "🎮 Taphachuu jalqabuuf qophiidha."
-        )
+reply_markup = ReplyKeyboardMarkup(
+    keyboard,
+    resize_keyboard=True
+)
 
+await update.message.reply_text(
+    "🎫 Kaardii Bingo filadhu:",
+    reply_markup=reply_markup
+)
 
         context.user_data.clear()
         
@@ -512,8 +524,9 @@ if __name__ == "__main__":
 
     TOKEN = os.environ["BOT_TOKEN"]
 
-    app = Application.builder().token(TOKEN).build()
-
+    app = Application.builder().token(TOKEN).build(
+    )
+)
     app.add_handler(
         CommandHandler("start", start)
     )
@@ -541,7 +554,12 @@ if __name__ == "__main__":
     app.add_handler(
         CommandHandler("bingo", check_bingo)
     )
-
+    app.add_handler(
+    MessageHandler(
+        filters.Regex("^🎫 Filadhu$"),
+        buy_card
+    )
+)
     app.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
