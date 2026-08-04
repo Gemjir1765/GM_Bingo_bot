@@ -590,22 +590,23 @@ def format_card(card):
             register_user
         )
     )
-
-
-    app.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            admin_buttons
-        )
+    
+app.add_handler(
+    MessageHandler(
+        filters.Regex("^(📊 Statistics|💸 Withdraw Requests|🎮 Start Game|🔢 Next Number|📢 Broadcast)$"),
+        admin_buttons
     )
+)
 
 
-    app.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            send_broadcast
-        )
+app.add_handler(
+    MessageHandler(
+        filters.Regex("^/broadcast"),
+        send_broadcast
     )
+)
+
+    
 
 
     print("🤖 Bingo Bot Started...")
