@@ -510,7 +510,6 @@ async def send_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 chat_id=user_id,
                 text=f"📢 Beeksisa Admin:\n\n{text}"
             )
-
             sent += 1
 
         except:
@@ -529,9 +528,8 @@ if __name__ == "__main__":
 
     TOKEN = os.environ["BOT_TOKEN"]
 
-    app = Application.builder().token(TOKEN).build(
-    )
-)
+    app = Application.builder().token(TOKEN).build()
+
     app.add_handler(
         CommandHandler("start", start)
     )
@@ -559,12 +557,14 @@ if __name__ == "__main__":
     app.add_handler(
         CommandHandler("bingo", check_bingo)
     )
+
     app.add_handler(
-    MessageHandler(
-        filters.Regex("^🎫 Filadhu$"),
-        buy_card
+        MessageHandler(
+            filters.Regex("^🎫 Filadhu$"),
+            buy_card
+        )
     )
-)
+
     app.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
