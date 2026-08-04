@@ -112,8 +112,7 @@ async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
-
-    if context.user_data.get("step") == "location":
+if context.user_data.get("step") == "location":
 
         context.user_data["location"] = text
 
@@ -160,13 +159,9 @@ async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=reply_markup
         )
 
-        context.user_data.clear()
-
-await update.message.reply_text(
-    "🎫 Kaardii Bingo filadhu:",
-    reply_markup=reply_markup
-)
+        context.user_data.clear(
              
+    
 def generate_card():
 
     card = {
