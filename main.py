@@ -507,11 +507,12 @@ async def send_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
 
 if __name__ == "__main__":
+
     init_db()
 
-TOKEN = os.environ["BOT_TOKEN"]
+    TOKEN = os.environ["BOT_TOKEN"]
 
-app = Application.builder().token(TOKEN).build()
+    app = Application.builder().token(TOKEN).build()
 
     app.add_handler(
         CommandHandler("start", start)
@@ -541,7 +542,6 @@ app = Application.builder().token(TOKEN).build()
         CommandHandler("bingo", check_bingo)
     )
 
-
     app.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
@@ -549,17 +549,15 @@ app = Application.builder().token(TOKEN).build()
         )
     )
 
-
     app.add_handler(
         MessageHandler(
-            filters.Regex("^(📊 Statistics|💸 Withdraw Requests|🎮 Start Game|🔢 Next Number|📢 Broadcast)$"),
+            filters.Regex(
+                "^(📊 Statistics|💸 Withdraw Requests|🎮 Start Game|🔢 Next Number|📢 Broadcast)$"
+            ),
             admin_buttons
         )
     )
 
-
     print("🤖 Bingo Bot Started...")
 
-
     app.run_polling()
-    
