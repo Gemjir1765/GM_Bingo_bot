@@ -392,83 +392,62 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{format_card(card)}"
     )
     
-def format_card(card):
 
+ def format_card(card):
     text = "🎫 BINGO CARD\n\n"
-
     text += " B    I    N    G    O\n"
     text += "---------------------\n"
 
-
     for i in range(5):
-
         row = ""
-
         for col in ["B", "I", "N", "G", "O"]:
-
             row += f"{str(card[col][i]):^5}"
-
-
         text += row + "\n"
 
-
     return text
-    keyboard = [
+
+
+keyboard = [
     ["🎮 Start Game"],
     ["🔢 Next Number"],
     ["📊 Statistics"],
     ["📢 Broadcast"]
 ]
-    async def admin_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+
+async def admin_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
-
     if text == "🎮 Start Game":
-
         await start_game(update, context)
 
-
     elif text == "🔢 Next Number":
-
         await next_number(update, context)
 
-
     elif text == "📊 Statistics":
-
         await statistics(update, context)
 
-
     elif text == "📢 Broadcast":
-
         await broadcast(update, context)
-        async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+
+async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
-
     if user_id != ADMIN_ID:
-
         await update.message.reply_text(
             "❌ Ati admin miti."
         )
-
         return
-
 
     total_players = len(players)
 
     total_cards = 0
-
     for user in players:
-
         total_cards += len(players[user]["cards"])
 
-
     total_winners = len(winners)
-
     called = len(called_numbers)
-
 
     await update.message.reply_text(
         "📊 Statistics\n\n"
@@ -476,9 +455,7 @@ def format_card(card):
         f"🎫 Cards: {total_cards}\n"
         f"🔢 Called Numbers: {called}\n"
         f"🏆 Winners: {total_winners}"
-        
-    )
-    async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    )   async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
