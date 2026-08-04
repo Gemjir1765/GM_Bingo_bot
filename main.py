@@ -363,14 +363,13 @@ async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Ati injifatteerta!"
         )
 
-
     else:
 
         await update.message.reply_text(
             "❌ Ammaaf Bingo hin taane."
         )
-    )
-    async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
@@ -392,6 +391,7 @@ async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🎫 Kaardii kee argatteetta!\n\n"
         f"{format_card(card)}"
     )
+    
 def format_card(card):
 
     text = "🎫 BINGO CARD\n\n"
