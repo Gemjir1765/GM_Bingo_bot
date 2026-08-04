@@ -369,31 +369,9 @@ async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "❌ Ammaaf Bingo hin taane."
         )
 
-async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    user_id = update.effective_user.id
-
-
-    card = generate_card()
-
-
-    if user_id not in players:
-
-        players[user_id] = {
-            "cards": []
-        }
-
-
-    players[user_id]["cards"].append(card)
-
-
-    await update.message.reply_text(
-        "🎫 Kaardii kee argatteetta!\n\n"
-        f"{format_card(card)}"
-    )
     
-
- def format_card(card):
+def format_card(card):
     text = "🎫 BINGO CARD\n\n"
     text += " B    I    N    G    O\n"
     text += "---------------------\n"
@@ -406,6 +384,36 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     return text
 
+async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+
+    card = generate_card()
+
+    if user_id not in players:
+        players[user_id] = {
+            "cards": []
+        }
+
+    players[user_id]["cards"].append(card)
+
+    await update.message.reply_text(
+        "🎫 Kaardii kee argatteetta!\n\n"
+        f"{format_card(card)}"
+    )
+
+
+def format_card(card):
+    text = "🎫 BINGO CARD\n\n"
+    text += " B    I    N    G    O\n"
+    text += "---------------------\n"
+
+    for i in range(5):
+        row = ""
+        for col in ["B", "I", "N", "G", "O"]:
+            row += f"{str(card[col][i]):^5}"
+        text += row + "\n"
+
+    return text
 
 keyboard = [
     ["🎮 Start Game"],
@@ -413,8 +421,6 @@ keyboard = [
     ["📊 Statistics"],
     ["📢 Broadcast"]
 ]
-
-
 async def admin_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
@@ -455,7 +461,8 @@ async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"🎫 Cards: {total_cards}\n"
         f"🔢 Called Numbers: {called}\n"
         f"🏆 Winners: {total_winners}"
-    )   async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    )   
+    async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
