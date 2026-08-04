@@ -141,27 +141,32 @@ async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
         conn.commit()
         conn.close()
 
-await update.message.reply_text(
-    "✅ Galmeen keessan xumurameera!\n\n"
-    "🎫 Kaardii Bingo filachuuf qophiidha."
-)
-        
-keyboard = [
-    ["🎫 Filadhu"]
-]
+        await update.message.reply_text(
+            "✅ Galmeen keessan xumurameera!\n\n"
+            "🎫 Kaardii Bingo filachuuf qophiidha."
+        )
 
-reply_markup = ReplyKeyboardMarkup(
-    keyboard,
-    resize_keyboard=True
-)
+        keyboard = [
+            ["🎫 Filadhu"]
+        ]
+
+        reply_markup = ReplyKeyboardMarkup(
+            keyboard,
+            resize_keyboard=True
+        )
+
+        await update.message.reply_text(
+            "🎫 Kaardii Bingo filadhu:",
+            reply_markup=reply_markup
+        )
+
+        context.user_data.clear()
 
 await update.message.reply_text(
     "🎫 Kaardii Bingo filadhu:",
     reply_markup=reply_markup
 )
-
-        context.user_data.clear()
-        
+             
 def generate_card():
 
     card = {
