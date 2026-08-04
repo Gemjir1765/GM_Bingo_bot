@@ -498,42 +498,34 @@ def format_card(card):
     await update.message.reply_text(
         "📢 Ergaa erguuf barreessi."
     )
-    async def send_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def send_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if context.user_data.get("broadcast") != True:
-
         return
 
-
-    message = update.message.text
-
+    text = update.message.text
 
     sent = 0
 
-
     for user_id in players:
-
         try:
-
             await context.bot.send_message(
                 chat_id=user_id,
-                text=f"📢 Beeksisa Admin:\n\n{message}"
+                text=f"📢 Beeksisa Admin:\n\n{text}"
             )
 
             sent += 1
 
-
         except:
-
             pass
-
 
     await update.message.reply_text(
         f"✅ Ergaan ergameera.\n"
         f"👥 Users: {sent}"
     )
 
-context.user_data.clear()
+    context.user_data.clear()
 if __name__ == "__main__":
 
     init_db()
