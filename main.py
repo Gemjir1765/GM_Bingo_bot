@@ -182,7 +182,6 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{format_card(card)}"
     )
 
-
 def format_card(card):
 
     text = "🎫 BINGO CARD\n\n"
@@ -190,18 +189,17 @@ def format_card(card):
     text += "-----------------------\n"
 
     for i in range(5):
-
         row = ""
 
         for col in ["B", "I", "N", "G", "O"]:
-
             row += f"{str(card[col][i]):^7}"
 
         text += row + "\n"
 
     return text
 
-    async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
 
@@ -217,7 +215,6 @@ def format_card(card):
     await update.message.reply_text(
         format_card(card)
     )
-
 
 async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
