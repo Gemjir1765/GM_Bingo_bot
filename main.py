@@ -503,14 +503,13 @@ async def send_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     context.user_data.clear()
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     init_db()
 
     app = Application.builder().token(
-        "TOKEN_KEE"
+        os.getenv("BOT_TOKEN")
     ).build()
-
 
     app.add_handler(
         CommandHandler("start", start)
