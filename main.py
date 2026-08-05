@@ -112,16 +112,14 @@ async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
-if context.user_data.get("step") == "location":
+    if context.user_data.get("step") == "location":
 
         context.user_data["location"] = text
 
-
-        conn = sqlite3.connect("bingo.db")
-
+        conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
 
-  cursor.execute(
+        cursor.execute(
             """
             INSERT OR REPLACE INTO users
             (user_id, name, phone, location)
@@ -135,7 +133,6 @@ if context.user_data.get("step") == "location":
             )
         )
 
-
         conn.commit()
         conn.close()
 
@@ -148,7 +145,7 @@ if context.user_data.get("step") == "location":
             ["🎫 Filadhu"]
         ]
 
-                reply_markup = ReplyKeyboardMarkup(
+        reply_markup = ReplyKeyboardMarkup(
             keyboard,
             resize_keyboard=True
         )
@@ -177,58 +174,6 @@ def generate_card():
     card["N"][2] = "FREE"
 
     return card
-
-async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    user_id = update.effective_user.id
-
-    card = generate_card()
-
-    if user_id not in players:
-        players[user_id] = {
-            "cards": []
-        }
-
-    players[user_id]["cards"].append(card)
-
-    await update.message.reply_text(
-        "🎫 Kaardiin kee qophaa'eera!\n\n"
-        f"{format_card(card)}"
-    )
-
-def format_card(card):
-
-    text = "🎫 BINGO CARD\n\n"
-    text += " B     I     N     G     O\n"
-    text += "-----------------------\n"
-
-    for i in range(5):
-        row = ""
-
-        for col in ["B", "I", "N", "G", "O"]:
-            row += f"{str(card[col][i]):^7}"
-
-        text += row + "\n"
-
-    return text
-
-
-async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    user_id = update.effective_user.id
-
-    card = generate_card()
-
-    if user_id not in players:
-        players[user_id] = {
-            "cards": []
-        }
-
-    players[user_id]["cards"].append(card)
-
-    await update.message.reply_text(
-        format_card(card)
-    )
 
 async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
