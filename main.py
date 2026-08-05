@@ -154,12 +154,12 @@ if context.user_data.get("step") == "location":
             resize_keyboard=True
         )
 
-        await update.message.reply_text(
-            "🎫 Kaardii Bingo filadhu:",
-            reply_markup=reply_markup
-        )
+   await update.message.reply_text(
+    "🎫 Kaardii Bingo filadhu:",
+    reply_markup=reply_markup
+)
 
-        context.user_data.clear(
+context.user_data.clear()
              
     
 def generate_card():
