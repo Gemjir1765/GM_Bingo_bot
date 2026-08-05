@@ -121,8 +121,7 @@ if context.user_data.get("step") == "location":
 
         cursor = conn.cursor()
 
-
-        cursor.execute(
+  cursor.execute(
             """
             INSERT OR REPLACE INTO users
             (user_id, name, phone, location)
@@ -161,6 +160,7 @@ if context.user_data.get("step") == "location":
 
         context.user_data.clear()
         return
+        
              
     
 def generate_card():
