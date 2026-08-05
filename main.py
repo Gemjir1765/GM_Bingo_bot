@@ -149,17 +149,18 @@ if context.user_data.get("step") == "location":
             ["🎫 Filadhu"]
         ]
 
-        reply_markup = ReplyKeyboardMarkup(
+                reply_markup = ReplyKeyboardMarkup(
             keyboard,
             resize_keyboard=True
         )
 
-           await update.message.reply_text(
+        await update.message.reply_text(
             "🎫 Kaardii Bingo filadhu:",
             reply_markup=reply_markup
         )
 
         context.user_data.clear()
+        return
              
     
 def generate_card():
