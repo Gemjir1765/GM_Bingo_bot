@@ -221,10 +221,7 @@ def create_card_pool():
         used_numbers.add(row[0])
 
     while count < TOTAL_CARDS:
-
-        # Random 4-digit card number
-        card_number = random.randint(1000, 9999)
-
+         card_number = count + 1
         if card_number in used_numbers:
             continue
 
@@ -427,8 +424,7 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
         SELECT card_number
         FROM cards
         WHERE status = 'AVAILABLE'
-        ORDER BY id
-        LIMIT 12
+        ORDER BY card_number ASC
     """)
 
     cards = cursor.fetchall()
@@ -436,37 +432,30 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
     conn.close()
 
     if not cards:
-
         await update.message.reply_text(
-            "❌ Yeroo ammaa kaardiwwan hundi gurguramaniiru."
+            "❌ Kaardiiwwan hunda gurguramaniiru."
         )
-
         return
 
     keyboard = []
 
     row = []
 
-    for index, card in enumerate(cards, start=1):
+    for card in cards:
 
         card_number = card[0]
 
         row.append(
-            f"🎫 #{card_number}"
+            f"🎫 {card_number}"
         )
 
-        if len(row) == 2:
+        if len(row) == 5:
 
             keyboard.append(row)
-
             row = []
 
     if row:
         keyboard.append(row)
-
-    keyboard.append(
-        ["➡️ Cards Itti Aanu"]
-    )
 
     reply_markup = ReplyKeyboardMarkup(
         keyboard,
@@ -475,11 +464,10 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         "🎫 GM BINGO\n\n"
-        "Kaardii barbaaddan filadhaa:\n\n"
+        "Kaardii filadhu:\n\n"
         "💵 Gatii: 20 Birr",
         reply_markup=reply_markup
     )
-
 
 def format_card(card):
     text = "🎫 BINGO CARD\n\n"
