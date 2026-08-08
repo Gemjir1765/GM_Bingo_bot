@@ -98,19 +98,23 @@ def load_players_from_db():
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT owner_id, card_data
+        SELECT owner_id, card_number, card_data
         FROM cards
         WHERE status = 'SOLD'
         AND owner_id IS NOT NULL
+        ORDER BY id
     """)
 
     rows = cursor.fetchall()
 
     conn.close()
 
-    for owner_id, card_data in rows:
+    for owner_id, card_number, card_data in rows:
 
-        card = json.loads(card_data)
+        card = {
+            "card_number": card_number,
+            "card_data": json.loads(card_data)
+        }
 
         if owner_id not in players:
             players[owner_id] = {
@@ -376,8 +380,6 @@ async def next_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     user_id = update.effective_user.id
 
     if not game_running:
@@ -404,11 +406,13 @@ async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     for card in cards:
 
+        card_data = card["card_data"]
+
         win = True
 
         for col in ["B", "I", "N", "G", "O"]:
 
-            for number in card[col]:
+            for number in card_data[col]:
 
                 if number != "FREE" and number not in called_numbers:
                     win = False
@@ -425,9 +429,15 @@ async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if user_id not in winners:
             winners.append(user_id)
 
+        card_numbers = [
+            str(card["card_number"])
+            for card in winning_cards
+        ]
+
         await update.message.reply_text(
-            f"🎉 BINGO!\n\n"
-            f"🏆 Kaardii mo'ate: {len(winning_cards)}\n\n"
+            "🎉 BINGO!\n\n"
+            f"🏆 Kaardiiwwan mo'atan: "
+            f"{', '.join(card_numbers)}\n\n"
             "Ati injifatteerta! 🏆"
         )
 
@@ -623,14 +633,17 @@ async def reserve_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    card = json.loads(card_data)
+    card = {
+    "card_number": card_number,
+    "card_data": json.loads(card_data)
+}
 
-    if user_id not in players:
-        players[user_id] = {
-            "cards": []
-        }
+if user_id not in players:
+    players[user_id] = {
+        "cards": []
+    }
 
-    players[user_id]["cards"].append(card)
+players[user_id]["cards"].append(card)
 
     await update.message.reply_text(
         f"✅ DEMO PAYMENT MILKAA'E!\n\n"
