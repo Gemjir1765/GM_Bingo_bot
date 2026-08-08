@@ -419,20 +419,65 @@ def format_card(card):
     return text
 
 async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
 
-    card = generate_card()
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
 
-    if user_id not in players:
-        players[user_id] = {
-            "cards": []
-        }
+    cursor.execute("""
+        SELECT card_number
+        FROM cards
+        WHERE status = 'AVAILABLE'
+        ORDER BY id
+        LIMIT 12
+    """)
 
-    players[user_id]["cards"].append(card)
+    cards = cursor.fetchall()
+
+    conn.close()
+
+    if not cards:
+
+        await update.message.reply_text(
+            "❌ Yeroo ammaa kaardiwwan hundi gurguramaniiru."
+        )
+
+        return
+
+    keyboard = []
+
+    row = []
+
+    for index, card in enumerate(cards, start=1):
+
+        card_number = card[0]
+
+        row.append(
+            f"🎫 #{card_number}"
+        )
+
+        if len(row) == 2:
+
+            keyboard.append(row)
+
+            row = []
+
+    if row:
+        keyboard.append(row)
+
+    keyboard.append(
+        ["➡️ Cards Itti Aanu"]
+    )
+
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard,
+        resize_keyboard=True
+    )
 
     await update.message.reply_text(
-        "🎫 Kaardii kee argatteetta!\n\n"
-        f"{format_card(card)}"
+        "🎫 GM BINGO\n\n"
+        "Kaardii barbaaddan filadhaa:\n\n"
+        "💵 Gatii: 20 Birr",
+        reply_markup=reply_markup
     )
 
 
