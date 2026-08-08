@@ -345,53 +345,59 @@ async def next_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     user_id = update.effective_user.id
 
+    if not game_running:
+        await update.message.reply_text(
+            "❌ Amma taphaan hin jalqabamne."
+        )
+        return
 
     if user_id not in players:
-
         await update.message.reply_text(
             "❌ Jalqaba kaardii bitadhu."
         )
-
         return
 
+    cards = players[user_id].get("cards", [])
 
-    if len(players[user_id]["cards"]) == 0:
-
+    if not cards:
         await update.message.reply_text(
             "❌ Kaardii hin qabdu."
         )
-
         return
 
+    winning_cards = []
 
-    card = players[user_id]["cards"][0]
+    for card in cards:
 
+        win = True
 
-    win = True
+        for col in ["B", "I", "N", "G", "O"]:
 
+            for number in card[col]:
 
-    for col in ["B", "I", "N", "G", "O"]:
+                if number != "FREE" and number not in called_numbers:
+                    win = False
+                    break
 
-        for number in card[col]:
+            if not win:
+                break
 
-            if number != "FREE" and number not in called_numbers:
+        if win:
+            winning_cards.append(card)
 
-                win = False
-
-
-
-    if win:
+    if winning_cards:
 
         if user_id not in winners:
-
             winners.append(user_id)
 
-
         await update.message.reply_text(
-            "🎉 BINGO!\n\n"
-            "Ati injifatteerta!"
+            f"🎉 BINGO!\n\n"
+            f"🏆 Kaardii mo'ate: {len(winning_cards)}\n\n"
+            "Ati injifatteerta! 🏆"
         )
 
     else:
@@ -399,7 +405,6 @@ async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "❌ Ammaaf Bingo hin taane."
         )
-
 async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     conn = sqlite3.connect(DATABASE)
