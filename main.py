@@ -492,18 +492,119 @@ async def show_selected_card(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     if status != "AVAILABLE":
         await update.message.reply_text(
-            "❌ Kaardii kun yeroo ammaa hin jiru."
+            "❌ Kaardii kun yeroo ammaa nama biraatiif qabameera "
+            "ykn gurgurameera."
         )
         return
 
     card = json.loads(card_data)
 
+    keyboard = [
+        [f"💳 Card #{card_number} — {CARD_PRICE} Birr"],
+        ["⬅️ Deebi'i"]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard,
+        resize_keyboard=True
+    )
+
+    # Card number filatame temporary keessatti kuusi
+    context.user_data["selected_card"] = card_number
+
     await update.message.reply_text(
         f"🎫 GM BINGO\n\n"
         f"🔢 Card Number: {card_number}\n\n"
         f"{format_card(card)}\n"
-        f"💵 Gatii: {CARD_PRICE} Birr"
+        f"💵 Gatii: {CARD_PRICE} Birr\n\n"
+        "👇 Kaardii kana bitachuuf button armaan gadii tuqi.",
+        reply_markup=reply_markup
     )
+    
+async def reserve_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user_id = update.effective_user.id
+
+    card_number = context.user_data.get("selected_card")
+
+    if card_number is None:
+        await update.message.reply_text(
+            "❌ Jalqaba kaardii filadhu."
+        )
+        return
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT card_data, status
+        FROM cards
+        WHERE card_number = ?
+        """,
+        (card_number,)
+    )
+
+    result = cursor.fetchone()
+
+    if result is None:
+        conn.close()
+        await update.message.reply_text(
+            "❌ Kaardii hin argamne."
+        )
+        return
+
+    card_data, status = result
+
+    if status != "AVAILABLE":
+        conn.close()
+        await update.message.reply_text(
+            "❌ Kaardii kun duraan qabameera ykn gurgurameera."
+        )
+        return
+
+    # DEMO MODE keessatti kallattiin SOLD goona
+    cursor.execute(
+        """
+        UPDATE cards
+        SET status = 'SOLD',
+            owner_id = ?
+        WHERE card_number = ?
+        AND status = 'AVAILABLE'
+        """,
+        (user_id, card_number)
+    )
+
+    conn.commit()
+
+    changed = cursor.rowcount
+
+    conn.close()
+
+    if changed == 0:
+        await update.message.reply_text(
+            "❌ Kaardii kana namni biraa dursee fudhateera."
+        )
+        return
+
+    card = json.loads(card_data)
+
+    if user_id not in players:
+        players[user_id] = {
+            "cards": []
+        }
+
+    players[user_id]["cards"].append(card)
+
+    await update.message.reply_text(
+        f"✅ DEMO PAYMENT MILKAA'E!\n\n"
+        f"🎫 Card #{card_number}\n"
+        f"💵 Gatii: {CARD_PRICE} Birr\n\n"
+        f"{format_card(card)}\n\n"
+        "🎮 Kaardii kanaan taphaachuu dandeessa."
+    )
+
+    context.user_data.pop("selected_card", None)
 def format_card(card):
     text = "🎫 BINGO CARD\n\n"
     text += " B    I    N    G    O\n"
@@ -653,6 +754,11 @@ app.add_handler(
     MessageHandler(
         filters.Regex(r"^🎫 \d+$"),
         show_selected_card
+
+        app.add_handler(
+    MessageHandler(
+        filters.Regex(r"^💳 Card #\d+ — \d+ Birr$"),
+        reserve_card        
     )
 )
 
