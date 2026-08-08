@@ -400,21 +400,6 @@ async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "❌ Ammaaf Bingo hin taane."
         )
 
-
-    
-def format_card(card):
-    text = "🎫 BINGO CARD\n\n"
-    text += " B    I    N    G    O\n"
-    text += "---------------------\n"
-
-    for i in range(5):
-        row = ""
-        for col in ["B", "I", "N", "G", "O"]:
-            row += f"{str(card[col][i]):^5}"
-        text += row + "\n"
-
-    return text
-
 async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     conn = sqlite3.connect(DATABASE)
@@ -469,6 +454,56 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
+async def show_selected_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    text = update.message.text
+
+    if not text.startswith("🎫 "):
+        return
+
+    try:
+        card_number = int(text.replace("🎫 ", "").strip())
+    except ValueError:
+        return
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT card_data, status
+        FROM cards
+        WHERE card_number = ?
+        """,
+        (card_number,)
+    )
+
+    result = cursor.fetchone()
+
+    conn.close()
+
+    if result is None:
+        await update.message.reply_text(
+            "❌ Kaardii kana hin argamne."
+        )
+        return
+
+    card_data, status = result
+
+    if status != "AVAILABLE":
+        await update.message.reply_text(
+            "❌ Kaardii kun yeroo ammaa hin jiru."
+        )
+        return
+
+    card = json.loads(card_data)
+
+    await update.message.reply_text(
+        f"🎫 GM BINGO\n\n"
+        f"🔢 Card Number: {card_number}\n\n"
+        f"{format_card(card)}\n"
+        f"💵 Gatii: {CARD_PRICE} Birr"
+    )
 def format_card(card):
     text = "🎫 BINGO CARD\n\n"
     text += " B    I    N    G    O\n"
@@ -608,27 +643,25 @@ if __name__ == "__main__":
     )
 
     app.add_handler(
-        MessageHandler(
-            filters.Regex("^🎫 Filadhu$"),
-            buy_card
-        )
+    MessageHandler(
+        filters.Regex("^🎫 Filadhu$"),
+        buy_card
     )
+)
 
-    app.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            register_user
-        )
+app.add_handler(
+    MessageHandler(
+        filters.Regex(r"^🎫 \d+$"),
+        show_selected_card
     )
+)
 
-    app.add_handler(
-        MessageHandler(
-            filters.Regex(
-                "^(📊 Statistics|💸 Withdraw Requests|🎮 Start Game|🔢 Next Number|📢 Broadcast)$"
-            ),
-            admin_buttons
-        )
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        register_user
     )
+)
 
     print("🤖 Bingo Bot Started...")
 
