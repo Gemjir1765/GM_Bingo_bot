@@ -338,24 +338,26 @@ async def start_game(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
     if user_id != ADMIN_ID:
-
         await update.message.reply_text(
             "❌ Ati admin miti."
         )
-
         return
 
     global game_running, called_numbers, winners
 
-    game_running = True
-
+    # Game duraanii reset
+    game_running = False
     called_numbers.clear()
-
     winners.clear()
+
+    # Game haaraa jalqabi
+    game_running = True
 
     await update.message.reply_text(
         "🎮 Taphaan Bingo jalqabameera!\n\n"
-        "🔢 Lakkoofsa waamuuf qophiidha."
+        "🔢 Lakkoofsa waamuuf qophiidha.\n\n"
+        "🏆 Winner Pool: 70%\n"
+        "👑 Admin Share: 30%"
     )
 async def next_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -740,18 +742,34 @@ total_pot, admin_amount, winner_amount = calculate_prize(total_cards)
 
 total_winners = len(winners)
 called = len(called_numbers)
+winner_details = ""
+
+if winners:
+    for winner_id in winners:
+        winner_prize = calculate_winner_prize(
+            total_cards,
+            total_winners
+        )
+
+        winner_details += (
+            f"\n🏆 Winner ID: {winner_id}"
+            f"\n💰 Prize: {winner_prize:.2f} Birr\n"
+        )
+else:
+    winner_details = "\n❌ Winner hin jiru."
+
 await update.message.reply_text(
-    "📊 Statistics\n\n"
+    "📊 GAME STATISTICS\n\n"
     f"👥 Players: {total_players}\n"
     f"🎫 Cards: {total_cards}\n"
-    f"💵 Card Price: {CARD_PRICE} Birr\n"
-    f"💰 Total Pot: {total_pot} Birr\n"
-    f"🏆 Winner Pool (70%): {winner_amount} Birr\n"
-    f"👑 Admin Share (30%): {admin_amount} Birr\n"
+    f"💵 Card Price: {CARD_PRICE} Birr\n\n"
+    f"💰 Total Pot: {total_pot:.2f} Birr\n"
+    f"🏆 Winner Pool (70%): {winner_amount:.2f} Birr\n"
+    f"👑 Admin Share (30%): {admin_amount:.2f} Birr\n\n"
     f"🔢 Called Numbers: {called}\n"
-    f"🏆 Winners: {total_winners}"
+    f"🏆 Winners: {total_winners}\n"
+    f"{winner_details}"
 )
-
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
