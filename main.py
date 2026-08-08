@@ -452,9 +452,8 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT card_number
+        SELECT card_number, status
         FROM cards
-        WHERE status = 'AVAILABLE'
         ORDER BY card_number ASC
     """)
 
@@ -464,24 +463,23 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not cards:
         await update.message.reply_text(
-            "❌ Kaardiiwwan hunda gurguramaniiru."
+            "❌ Kaardiiwwan hin argamne."
         )
         return
 
     keyboard = []
-
     row = []
 
-    for card in cards:
+    for card_number, status in cards:
 
-        card_number = card[0]
+        if status == "AVAILABLE":
+            button = f"🎫 {card_number}"
+        else:
+            button = f"🔴 {card_number}"
 
-        row.append(
-            f"🎫 {card_number}"
-        )
+        row.append(button)
 
         if len(row) == 5:
-
             keyboard.append(row)
             row = []
 
@@ -495,10 +493,13 @@ async def buy_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         "🎫 GM BINGO\n\n"
-        "Kaardii filadhu:\n\n"
-        "💵 Gatii: 20 Birr",
+        "Kaardii barbaaddan filadhaa.\n"
+        "🟢 Kaardii bana = bitamuu danda'a\n"
+        "🔴 Kaardii gurgurame = hin filatamu\n\n"
+        f"💵 Gatii: {CARD_PRICE} Birr",
         reply_markup=reply_markup
     )
+
 
 async def show_selected_card(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
