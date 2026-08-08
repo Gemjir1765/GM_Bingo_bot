@@ -88,6 +88,37 @@ def init_db():
 
     create_card_pool()
 
+def load_players_from_db():
+
+    global players
+
+    players.clear()
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT owner_id, card_data
+        FROM cards
+        WHERE status = 'SOLD'
+        AND owner_id IS NOT NULL
+    """)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    for owner_id, card_data in rows:
+
+        card = json.loads(card_data)
+
+        if owner_id not in players:
+            players[owner_id] = {
+                "cards": []
+            }
+
+        players[owner_id]["cards"].append(card)
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
@@ -715,6 +746,8 @@ async def send_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == "__main__":
 
     init_db()
+
+    load_players_from_db()
 
     TOKEN = os.environ["BOT_TOKEN"]
 
