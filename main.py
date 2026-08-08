@@ -8,8 +8,10 @@ from telegram.ext import (
     filters
 )
 
+import os
 import random
 import sqlite3
+import json
 
 
 # =========================
@@ -44,6 +46,13 @@ user_steps = {}
 DATABASE = "bingo.db"
 
 # =========================
+# BINGO CARD SETTINGS
+# =========================
+
+TOTAL_CARDS = 200
+CARD_PRICE = 20
+
+# =========================
 # DATABASE
 # =========================
 
@@ -53,6 +62,7 @@ def init_db():
 
     cursor = conn.cursor()
 
+    # Users table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
         user_id INTEGER PRIMARY KEY,
@@ -62,9 +72,21 @@ def init_db():
     )
     """)
 
-    conn.commit()
+    # Bingo cards table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS cards (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        card_number INTEGER UNIQUE NOT NULL,
+        card_data TEXT NOT NULL,
+        status TEXT DEFAULT 'AVAILABLE',
+        owner_id INTEGER
+    )
+    """)
 
+    conn.commit()
     conn.close()
+
+    create_card_pool()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -174,7 +196,60 @@ def generate_card():
     card["N"][2] = "FREE"
 
     return card
+    
+def create_card_pool():
 
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    # Yoo cards duraan uumamanii jiran, irra deebinee hin uumin
+    cursor.execute("SELECT COUNT(*) FROM cards")
+
+    count = cursor.fetchone()[0]
+
+    if count >= TOTAL_CARDS:
+        conn.close()
+        return
+
+    used_numbers = set()
+
+    cursor.execute("SELECT card_number FROM cards")
+
+    existing_numbers = cursor.fetchall()
+
+    for row in existing_numbers:
+        used_numbers.add(row[0])
+
+    while count < TOTAL_CARDS:
+
+        # Random 4-digit card number
+        card_number = random.randint(1000, 9999)
+
+        if card_number in used_numbers:
+            continue
+
+        used_numbers.add(card_number)
+
+        card = generate_card()
+
+        card_data = json.dumps(card)
+
+        cursor.execute(
+            """
+            INSERT INTO cards
+            (card_number, card_data, status, owner_id)
+            VALUES (?, ?, 'AVAILABLE', NULL)
+            """,
+            (
+                card_number,
+                card_data
+            )
+        )
+
+        count += 1
+
+    conn.commit()
+    conn.close()
 async def admin_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.effective_user.id
