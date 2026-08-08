@@ -55,7 +55,6 @@ CARD_PRICE = 20
 ADMIN_PERCENT = 30
 WINNER_PERCENT = 70
 
-
 def calculate_prize(total_cards):
 
     total_pot = total_cards * CARD_PRICE
@@ -64,6 +63,19 @@ def calculate_prize(total_cards):
     winner_amount = total_pot * WINNER_PERCENT / 100
 
     return total_pot, admin_amount, winner_amount
+
+
+def calculate_winner_prize(total_cards, number_of_winners):
+
+    total_pot, admin_amount, winner_pool = calculate_prize(total_cards)
+
+    if number_of_winners <= 0:
+        return 0
+
+    prize_per_winner = winner_pool / number_of_winners
+
+    return prize_per_winner
+
 
 # =========================
 # DATABASE
@@ -229,7 +241,6 @@ async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
         
              
-    
 def generate_card():
 
     card = {
@@ -445,13 +456,24 @@ async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         card_numbers = [
             str(card["card_number"])
             for card in winning_cards
+            total_cards = sum(
+    len(players[user]["cards"])
+    for user in players
+)
+
+number_of_winners = len(winners)
+
+prize_per_winner = calculate_winner_prize(
+    total_cards,
+    number_of_winners
+)
         ]
 
         await update.message.reply_text(
             "🎉 BINGO!\n\n"
             f"🏆 Kaardiiwwan mo'atan: "
-            f"{', '.join(card_numbers)}\n\n"
-            "Ati injifatteerta! 🏆"
+            f"Ati injifatteerta! 🏆\n\n"
+            f"💰 Prize kee: {prize_per_winner:.2f} Birr"
         )
 
     else:
