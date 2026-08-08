@@ -404,6 +404,8 @@ async def next_number(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    global game_running
+
     user_id = update.effective_user.id
 
     if not game_running:
@@ -449,18 +451,13 @@ async def check_bingo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             winning_cards.append(card)
 
     if winning_cards:
+if winning_cards:
 
-        if user_id not in winners:
-            winners.append(user_id)
+    if user_id not in winners:
+        winners.append(user_id)
 
-        card_numbers = [
-            str(card["card_number"])
-            for card in winning_cards
-            total_cards = sum(
-    len(players[user]["cards"])
-    for user in players
-)
-
+    game_running = False
+        
 number_of_winners = len(winners)
 
 prize_per_winner = calculate_winner_prize(
