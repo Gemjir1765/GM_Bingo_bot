@@ -52,6 +52,19 @@ DATABASE = "bingo.db"
 TOTAL_CARDS = 200
 CARD_PRICE = 20
 
+ADMIN_PERCENT = 30
+WINNER_PERCENT = 70
+
+
+def calculate_prize(total_cards):
+
+    total_pot = total_cards * CARD_PRICE
+
+    admin_amount = total_pot * ADMIN_PERCENT / 100
+    winner_amount = total_pot * WINNER_PERCENT / 100
+
+    return total_pot, admin_amount, winner_amount
+
 # =========================
 # DATABASE
 # =========================
@@ -700,20 +713,25 @@ async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     total_players = len(players)
 
-    total_cards = 0
-    for user in players:
-        total_cards += len(players[user]["cards"])
+total_cards = 0
+for user in players:
+    total_cards += len(players[user]["cards"])
 
-    total_winners = len(winners)
-    called = len(called_numbers)
+total_pot, admin_amount, winner_amount = calculate_prize(total_cards)
 
-    await update.message.reply_text(
-        "📊 Statistics\n\n"
-        f"👥 Players: {total_players}\n"
-        f"🎫 Cards: {total_cards}\n"
-        f"🔢 Called Numbers: {called}\n"
-        f"🏆 Winners: {total_winners}"
-    )
+total_winners = len(winners)
+called = len(called_numbers)
+await update.message.reply_text(
+    "📊 Statistics\n\n"
+    f"👥 Players: {total_players}\n"
+    f"🎫 Cards: {total_cards}\n"
+    f"💵 Card Price: {CARD_PRICE} Birr\n"
+    f"💰 Total Pot: {total_pot} Birr\n"
+    f"🏆 Winner Pool (70%): {winner_amount} Birr\n"
+    f"👑 Admin Share (30%): {admin_amount} Birr\n"
+    f"🔢 Called Numbers: {called}\n"
+    f"🏆 Winners: {total_winners}"
+)
 
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
